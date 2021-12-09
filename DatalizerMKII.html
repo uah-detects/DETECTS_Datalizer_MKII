@@ -10,32 +10,14 @@
 <body>
     
 <h1 class="title">DETECTS Datalizer MKII</h1>
-<button class="changeColor">Click Me!</button>
+<input type = "button" onclick = "plotGraph()" value = "Plot"> 
 
-<ul class="name-list">
-    <li>Ed</li>
-    <li>Johnson</li>
-    <li>Bull</li>
-    <li>Jimmie</li>
-    <li>Small</li>
-    <li>Pete</li>
-</ul>
-<! –– div id="tester" style="width:600px;height:250px;"></div>
-<script>
-  TESTER = document.getElementById('tester');
-	Plotly.newPlot( TESTER, [{
-	x:  [1,2,4,5,6],
-	y: [1, 2, 4, 8, 16] }], {
-	margin: { t: 0 } } );
-</script>
-  
-  <div id="drop_zone" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);">
-    <p>Drag one or more files to this Drop Zone ...</p>
-  </div -->
+<div id="plotGraph" style="width:600px;height:250px;"></div>
+
   <input type="file" id="file-input" />
   <h3>Contents of the file:</h3>
   <pre id="file-content"></pre>
-  <div id="finalVelocityOne" style="width:500px;height:500px;"></div>
+  
 </body>
 <script src="DatalizerMKII_JS.js"></script>
 

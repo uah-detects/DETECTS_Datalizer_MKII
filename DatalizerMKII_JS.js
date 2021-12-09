@@ -56,40 +56,30 @@ function dropHandler(ev) {
     return myArray;
   }
   function returnYlist(){
-    var myArray2 = [6,7,8,9,10];
+    var myArray2 = [6,7,8,9,100];
     return myArray2;
   }
 
 
-  function calculateFinalVelocity()
+  function plotGraph()
   {
 
-  // These are two arrays initialized
-  var x_array = [1,2,4,5,6];
+    var x_array = returnXlist();
 
-  var y_array = [1, 2, 4, 8, 16];
+    var y_array = returnYlist();
 
-  var trace1 =
-  {
-      x: x_array,
-      y: y_array,
-      type: 'scatter'
+    var trace1 =
+    {
+        x: x_array,
+        y: y_array,
+        type: 'scatter'
 
-  };
-  console.log('Called');
-  var data = [trace1];
+    };
+    console.log('Called');
+    var data = [trace1];
 
-  document.getElementById("finalVelocityOne").innerHTML = Plotly.newPlot("finalVelocityOne", data);
-  Plotly.newPlot("finalVelocityOne", data);
-
-  // alerts used to test if arrays were being updated
-  // alert(time_array)
-  // alert(velocity_array)
-  }
-
-
-  function plot(){
+    Plotly.newPlot("plotGraph", data);
 
   }
 
-  //document.getElementById('file-input').addEventListener('change', readSingleFile, false);
+  document.getElementById('file-input').addEventListener('change', readSingleFile, false);
