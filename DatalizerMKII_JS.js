@@ -41,6 +41,7 @@ function dropHandler(ev) {
     reader.onload = function(e) {
       var contents = e.target.result;
       displayContents(contents);
+      plot();
     };
     reader.readAsText(file);
   }
@@ -49,6 +50,46 @@ function dropHandler(ev) {
     var element = document.getElementById('file-content');
     element.textContent = contents;
   }
-  
-  document.getElementById('file-input')
-    .addEventListener('change', readSingleFile, false);
+
+  function returnXlist(){
+    var myArray = [1,2,3,4,5];
+    return myArray;
+  }
+  function returnYlist(){
+    var myArray2 = [6,7,8,9,10];
+    return myArray2;
+  }
+
+
+  function calculateFinalVelocity()
+  {
+
+  // These are two arrays initialized
+  var x_array = [1,2,4,5,6];
+
+  var y_array = [1, 2, 4, 8, 16];
+
+  var trace1 =
+  {
+      x: x_array,
+      y: y_array,
+      type: 'scatter'
+
+  };
+  console.log('Called');
+  var data = [trace1];
+
+  document.getElementById("finalVelocityOne").innerHTML = Plotly.newPlot("finalVelocityOne", data);
+  Plotly.newPlot("finalVelocityOne", data);
+
+  // alerts used to test if arrays were being updated
+  // alert(time_array)
+  // alert(velocity_array)
+  }
+
+
+  function plot(){
+
+  }
+
+  //document.getElementById('file-input').addEventListener('change', readSingleFile, false);
