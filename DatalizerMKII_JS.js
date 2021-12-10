@@ -46,6 +46,7 @@ function dropHandler(ev) {
     reader.readAsText(file);
   }
   
+  
   function displayContents(contents) {
     var element = document.getElementById('file-content');
     element.textContent = contents;
