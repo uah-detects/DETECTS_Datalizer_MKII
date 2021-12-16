@@ -40,15 +40,33 @@ function dropHandler(ev) {
     var reader = new FileReader();
     reader.onload = function(e) {
       var fileContentArray = this.result.split(/\r\n|\n/);
-      for(var line = 0; line < fileContentArray.length-1; line++){
-        console.log(line + " --> "+ fileContentArray[line]);
-      }
+      var headerLine = splitHeader(fileContentArray);
+      console.log("in read --> " + headerLine);
+      var headerSize = headerLine.length;
+      console.log(headerSize);
+      //displayContentsOfFile(fileContentArray);
+      //for(var line = 0; line < fileContentArray.length-1; line++){
+      //  console.log(line + " --> "+ fileContentArray[line]);
+      //}
      // var contents = e.target.result;
       //displayContents(contents);
     };
     reader.readAsText(file);
   }
   
+  function splitHeader(fileContentArray)
+  {
+    var headerLine = fileContentArray[0].split(',');
+    console.log(headerLine);
+    return headerLine;
+  }
+
+  function displayContentsOfFile(fileContentArray)
+  {
+    for(var line = 0; line < fileContentArray.length-1; line++){
+      console.log(line + " --> "+ fileContentArray[line]);
+    }
+  }
 
   
   function displayContents(contents) {
