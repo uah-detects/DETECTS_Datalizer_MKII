@@ -39,8 +39,12 @@ function dropHandler(ev) {
     }
     var reader = new FileReader();
     reader.onload = function(e) {
-      var contents = e.target.result;
-      displayContents(contents);
+      var fileContentArray = this.result.split(/\r\n|\n/);
+      for(var line = 0; line < fileContentArray.length-1; line++){
+        console.log(line + " --> "+ fileContentArray[line]);
+      }
+     // var contents = e.target.result;
+      //displayContents(contents);
     };
     reader.readAsText(file);
   }
