@@ -41,11 +41,11 @@ function dropHandler(ev) {
     reader.onload = function(e) {
       var contents = e.target.result;
       displayContents(contents);
-      plot();
     };
     reader.readAsText(file);
   }
   
+
   
   function displayContents(contents) {
     var element = document.getElementById('file-content');
