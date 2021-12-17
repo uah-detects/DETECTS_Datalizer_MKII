@@ -44,6 +44,8 @@ function dropHandler(ev) {
       console.log("in read --> " + headerLine);
       var headerSize = headerLine.length;
       console.log(headerSize);
+      var bodyArray = splitBody(headerSize, fileContentArray);
+      console.log(bodyArray);
       //displayContentsOfFile(fileContentArray);
       //for(var line = 0; line < fileContentArray.length-1; line++){
       //  console.log(line + " --> "+ fileContentArray[line]);
@@ -59,6 +61,31 @@ function dropHandler(ev) {
     var headerLine = fileContentArray[0].split(',');
     console.log(headerLine);
     return headerLine;
+  }
+
+  function splitBody(headerSize,fileContentArray)
+  {
+    var dataArray = [];
+    var headerLine = fileContentArray[0].split(',');
+
+    for(let i = 0; i < headerSize; i++)                         //Createing each array column of the multidimensional Array
+    {
+        dataArray.push([]);
+    }
+    console.log(dataArray);
+    
+    for(let j = 1; j < fileContentArray.length - 1; j++)            //First loop is looping through the file line by line
+    {
+      var parseLine = fileContentArray[j].split(',');
+
+      for(let k = 0; k < headerSize; k++)                       //Looping through each line item by item
+      {
+        dataArray[k].push(parseLine[k]);
+      }
+
+    }
+
+    return dataArray;
   }
 
   function displayContentsOfFile(fileContentArray)
