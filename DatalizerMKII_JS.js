@@ -1,5 +1,8 @@
 const userList = document.querySelectorAll(".name-list li");
 
+var headerDataArray = [];
+var bodyDataArray = [];
+
 console.log(userList);
 
 function dropHandler(ev) {
@@ -44,14 +47,16 @@ function dropHandler(ev) {
       console.log("in read --> " + headerLine);
       var headerSize = headerLine.length;
       console.log(headerSize);
+
+      //parsing the body of the data
       var bodyArray = splitBody(headerSize, fileContentArray);
       console.log(bodyArray);
-      //displayContentsOfFile(fileContentArray);
-      //for(var line = 0; line < fileContentArray.length-1; line++){
-      //  console.log(line + " --> "+ fileContentArray[line]);
-      //}
-     // var contents = e.target.result;
-      //displayContents(contents);
+
+      //Setting global arrays
+      headerDataArray = headerLine;
+      bodyDataArray = bodyArray;
+
+      populateDropdowns(headerLine);
     };
     reader.readAsText(file);
   }
@@ -88,6 +93,28 @@ function dropHandler(ev) {
     return dataArray;
   }
 
+  function populateDropdowns(headerArray)
+  {
+    var selectX = document.getElementById("selectX");
+    var selectY = document.getElementById("selectY");
+
+    for(var i = 0; i < headerArray.length; i++) {
+      var opt = headerArray[i];
+      var el = document.createElement("option");
+      el.textContent = opt;
+      el.value = opt;
+      selectX.appendChild(el);
+    }
+    for(var i = 0; i < headerArray.length; i++) {
+      var opt = headerArray[i];
+      var el = document.createElement("option");
+      el.textContent = opt;
+      el.value = opt;
+      selectY.appendChild(el);
+    }
+
+  }
+
   function displayContentsOfFile(fileContentArray)
   {
     for(var line = 0; line < fileContentArray.length-1; line++){
@@ -114,21 +141,62 @@ function dropHandler(ev) {
   function plotGraph()
   {
 
+    console.log(bodyDataArray);
+
+    var xSelection = document.getElementById("selectX");
+    var ySelection = document.getElementById("selectY");
+    console.log("X = " +xSelection);
+    console.log("Y = " +ySelection)
+    var xPosition = xSelection.value;
+    var yPosition = ySelection.value;
+    console.log("X = " + xPosition);
+    console.log("Y = " + yPosition);
+
     var x_array = returnXlist();
 
     var y_array = returnYlist();
+    
+    var xIndex = -1;
+    var yIndex = -1;
+    
+    var count = 0;
 
-    var trace1 =
+    do
     {
-        x: x_array,
-        y: y_array,
-        type: 'scatter'
+      if(xPosition == headerDataArray[count])
+      {
+        xIndex = count;
+      }
+      if(yPosition == headerDataArray[count])
+      {
+        yIndex = count;
+      }
+      count++;
+    }while(count < headerDataArray.length)
 
-    };
-    console.log('Called');
-    var data = [trace1];
+    console.log("X = " + xIndex);
+    console.log("Y = " + yIndex);
 
-    Plotly.newPlot("plotGraph", data);
+    if (xIndex == -1 || yIndex == -1)
+    {
+      console.log("Error: No data selected");
+    }
+    else
+    {
+      var trace1 =
+      {
+          x: bodyDataArray[xIndex],
+          y: bodyDataArray[yIndex],
+          type: 'scatter'
+
+      };
+      console.log('Called');
+      var data = [trace1];
+
+      Plotly.newPlot("plotGraph", data);
+    }
+
+
 
   }
 
