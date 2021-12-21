@@ -2,7 +2,6 @@
 var headerDataArray = [];
 var bodyDataArray = [];
 
-
 function readSingleFile(e) {
   var file = e.target.files[0];
   if (!file) {
@@ -134,8 +133,29 @@ function plotGraph()
     };
     console.log('Called');
     var data = [trace1];
+   // Plotly.newPlot("txt_1", data);
 
-    Plotly.newPlot("plotGraph", data);
+  // Finding total number of elements added
+  var total_element = $(".element").length;
+ 
+  // last <div> with element class id
+  var lastid = $(".element:last").attr("id");
+  var split_id = lastid.split("_");
+  var nextindex = Number(split_id[1]) + 1;
+
+  var max = 5;
+  // Check total number elements
+  if(total_element < max ){
+   // Adding new div container after last occurance of element class
+   $(".element:last").after("<div class='element' id='div_"+ nextindex +"'></div>");
+ 
+   // Adding element to <div>
+   $("#div_" + nextindex).append("<div id='txt_"+ nextindex +"' style='width:1200px;height:500px;'></div>");
+ 
+  }
+  Plotly.newPlot("txt_"+ nextindex +"", data);
+
+    
   }
 
 }
