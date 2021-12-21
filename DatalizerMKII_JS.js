@@ -1,8 +1,10 @@
+/*------ Parse Config File------------------------------------------------- */
 
+/*------ Plot Graph-------------------------------------------------------- */
 var headerDataArray = [];
 var bodyDataArray = [];
 
-function readSingleFile(e) {
+function readDataFile(e) {
   var file = e.target.files[0];
   if (!file) {
     return;
@@ -133,8 +135,10 @@ function plotGraph()
     };
     console.log('Called');
     var data = [trace1];
+
    // Plotly.newPlot("txt_1", data);
 
+///////////////////////////////////////////////////////////////////////////////////////////// Multi Functionality Start ///////////////////////////////////////////////
   // Finding total number of elements added
   var total_element = $(".element").length;
  
@@ -154,10 +158,10 @@ function plotGraph()
  
   }
   Plotly.newPlot("txt_"+ nextindex +"", data);
-
+///////////////////////////////////////////////////////////////////////////////////////////// Multi Functionality End //////////////////////////////////////////////////
     
   }
 
 }
 
-document.getElementById('file-input').addEventListener('change', readSingleFile, false);
+document.getElementById('file-input').addEventListener('change', readDataFile, false);

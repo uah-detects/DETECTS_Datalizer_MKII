@@ -1,0 +1,10 @@
+%time,lasttime,lat,lng,speed,course,altitude,Temperature (C),Pressure (Pa),Ascent Rate (M/Sec)%
+<Clouds>{
+[lat,lng]
+[speed,altitude]
+[time,Pressure (Pa)]
+}
+<Ascent Rate>{
+[course,lng]
+[Temperature (C),time]
+}
