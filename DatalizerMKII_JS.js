@@ -1,5 +1,50 @@
 /*------ Parse Config File------------------------------------------------- */
 
+var verificationHeaderArray = [];
+
+function readConfFile(e) {
+  var file = e.target.files[0];
+  if (!file) {
+    return;
+  }
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var fileContentArray = this.result.split(/\r\n|\n/);
+    console.log(fileContentArray);
+    var headerLine = grabVerHeader(fileContentArray);
+    console.log(headerLine);
+    if (headerLine == null)
+    {
+      return { 
+        error: true,
+        message: 'No valid verification header'
+      }
+    }
+    verificationHeaderArray = headerLine;
+  };
+  reader.readAsText(file);
+}
+
+function grabVerHeader(fileContentArray)
+{
+  var headerLine = fileContentArray[0];
+  if(headerLine.startsWith("%") && headerLine.endsWith("%")){
+    console.log(headerLine);
+    var validHLine = headerLine.substring(
+      headerLine.indexOf("%") + 1, 
+      headerLine.lastIndexOf("%")
+    );
+    var newHeaderArray = validHLine.split(',');
+    return newHeaderArray;
+  }
+  else{
+    console.log("Error: No valid verification header");
+    window.alert("Error: No valid verification header");
+    return null;
+  }
+
+}
+
 /*------ Plot Graph-------------------------------------------------------- */
 var headerDataArray = [];
 var bodyDataArray = [];
@@ -164,4 +209,10 @@ function plotGraph()
 
 }
 
-document.getElementById('file-input').addEventListener('change', readDataFile, false);
+
+
+/////////// Event Listeners ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+document.getElementById('file-input').addEventListener('change', readDataFile, false);  // Listener for the Data File input
+
+document.getElementById('CONFIG_FILE').addEventListener('change', readConfFile, false);  // Listener for the Data File input
