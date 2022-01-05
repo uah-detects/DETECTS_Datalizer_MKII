@@ -11,16 +11,19 @@ function readConfFile(e) {
   reader.onload = function(e) {
     var fileContentArray = this.result.split(/\r\n|\n/);
     console.log(fileContentArray);
+
     var headerLine = grabVerHeader(fileContentArray);
+
     console.log(headerLine);
-    if (headerLine == null)
+    if (headerLine == null)         //Testing to see if a verification header was returneed by grabVerHeader
     {
       return { 
         error: true,
         message: 'No valid verification header'
       }
     }
-    verificationHeaderArray = headerLine;
+
+    verificationHeaderArray = headerLine;     // setting the global version of the headerLine
   };
   reader.readAsText(file);
 }
@@ -28,12 +31,14 @@ function readConfFile(e) {
 function grabVerHeader(fileContentArray)
 {
   var headerLine = fileContentArray[0];
+  console.log(headerLine);
   if(headerLine.startsWith("%") && headerLine.endsWith("%")){
     console.log(headerLine);
     var validHLine = headerLine.substring(
       headerLine.indexOf("%") + 1, 
       headerLine.lastIndexOf("%")
     );
+    console.log(validHLine);
     var newHeaderArray = validHLine.split(',');
     return newHeaderArray;
   }
@@ -43,6 +48,24 @@ function grabVerHeader(fileContentArray)
     return null;
   }
 
+}
+
+function getConfBody(fileContentArray)
+{
+  var data2DArray = [];
+  
+  for(let j = 1; j < fileContentArray.length - 1; j++)            //First loop is looping through the file line by line
+  {
+    var parseLine = fileContentArray[j].split(',');
+
+    for(let k = 0; k < headerSize; k++)                       //Looping through each line item, item by item
+    {
+      dataArray[k].push(parseLine[k]);
+    }
+
+  }
+
+  return dataArray;
 }
 
 /*------ Plot Graph-------------------------------------------------------- */
@@ -87,7 +110,7 @@ function splitBody(headerSize,fileContentArray)
   var dataArray = [];
   var headerLine = fileContentArray[0].split(',');
 
-  for(let i = 0; i < headerSize; i++)                         //Createing each array column of the multidimensional Array
+  for(let i = 0; i < headerSize; i++)                         //Creating each array column of the multidimensional Array
   {
       dataArray.push([]);
   }
@@ -97,7 +120,7 @@ function splitBody(headerSize,fileContentArray)
   {
     var parseLine = fileContentArray[j].split(',');
 
-    for(let k = 0; k < headerSize; k++)                       //Looping through each line item by item
+    for(let k = 0; k < headerSize; k++)                       //Looping through each line item, item by item
     {
       dataArray[k].push(parseLine[k]);
     }
@@ -192,7 +215,7 @@ function plotGraph()
   var split_id = lastid.split("_");
   var nextindex = Number(split_id[1]) + 1;
 
-  var max = 5;
+  var max = 8; // Setting the maximum number of the graphs that the program will allow
   // Check total number elements
   if(total_element < max ){
    // Adding new div container after last occurance of element class
