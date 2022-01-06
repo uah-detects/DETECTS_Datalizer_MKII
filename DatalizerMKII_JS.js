@@ -24,6 +24,17 @@ function readConfFile(e) {
     }
 
     verificationHeaderArray = headerLine;     // setting the global version of the headerLine
+
+    console.log("Before");
+    var body = getConfBody(fileContentArray);
+    if(body == null)
+    {
+      window.alert("Error: Config Syntax Error");
+      return;
+    }
+    console.log(body);
+    console.log("After");
+
   };
   reader.readAsText(file);
 }
@@ -52,7 +63,116 @@ function grabVerHeader(fileContentArray)
 
 function getConfBody(fileContentArray)
 {
-  var data2DArray = [];
+  var data2DArray = [];                    //holds the main 2d Array
+  console.log(fileContentArray.length - 1);
+  var fileBodyString = fileContentArray[0];
+
+  for(let i = 1; i <= fileContentArray.length - 1; i++)
+  {
+    fileBodyString = fileBodyString + fileContentArray[i];
+  }
+  console.log(fileBodyString);
+
+  var startPercentPos = 0;
+  var closePercentPos = 0;
+  var close = false;
+
+
+  var stopLoop = true;
+  var lastPosition = 0;
+
+  console.log(fileBodyString.length - 1);
+  while(stopLoop)
+  {
+    /*var percentPosition = fileBodyString.indexOf("<",lastPosition);
+    console.log(percentPosition);
+    if(percentPosition == -1)
+    {
+      stopLoop = false;
+    }
+    else{
+
+      if(percentPosition + 1 < fileBodyString.length -1)
+      {
+        lastPosition = percentPosition + 1;
+      }
+      else{
+        stopLoop = false;
+      }
+    }*/
+
+      switch(close) {
+        case false:
+          var percentPosition = fileBodyString.indexOf("<",lastPosition);
+          console.log(percentPosition);
+          if(percentPosition == -1)
+          {
+            stopLoop = false;
+          }
+          else{
+
+            if(percentPosition + 1 < fileBodyString.length -1)
+            {
+              lastPosition = percentPosition + 1;
+            }
+            else{
+              stopLoop = false;
+            }
+            startPercentPos = percentPosition;
+            console.log("Start: "+ startPercentPos);
+            close = true;
+          }
+          break;
+        case true:
+          var percentPosition = fileBodyString.indexOf(">",lastPosition);
+          console.log(percentPosition);
+          if(percentPosition == -1)
+          {
+            stopLoop = false;
+          }
+          else{
+
+            if(percentPosition + 1 < fileBodyString.length -1)
+            {
+              lastPosition = percentPosition + 1;
+            }
+            else{
+              stopLoop = false;
+            }
+            closePercentPos = percentPosition;
+            console.log("Stop: "+ closePercentPos);
+            var scienceQuestion = fileBodyString.substring(startPercentPos+1,closePercentPos);
+            console.log(scienceQuestion);
+            var graphArray = getGraphs(closePercentPos,fileBodyString);
+            if(graphArray == null)
+            {
+              return null;
+            }
+            console.log(graphArray);
+            var arrayLineItem = [];
+            arrayLineItem.push(scienceQuestion);
+            for(let i = 0; i < graphArray.length; i++)
+            {
+              arrayLineItem.push(graphArray[i]);
+            }
+            console.log(arrayLineItem);
+            data2DArray.push(arrayLineItem);
+            close = false;
+          }
+          break;
+        default:
+          return null;
+      }
+    
+    
+  }
+
+
+
+  /*for(let i = 2; i <fileContentArray.length;i++)
+  {
+    //file
+  }
   
   for(let j = 1; j < fileContentArray.length - 1; j++)            //First loop is looping through the file line by line
   {
@@ -63,9 +183,210 @@ function getConfBody(fileContentArray)
       dataArray[k].push(parseLine[k]);
     }
 
+  }*/
+
+  return data2DArray;
+}
+
+function getGraphs(closeAngleBracketPos,fileBodyString)
+{
+  var graphString;
+  var startPercentPos = 0;
+  var closePercentPos = 0;
+  var close = false;
+
+
+  var stopLoop = true;
+  var lastPosition = closeAngleBracketPos;
+
+  console.log(fileBodyString.length - 1);
+  while(stopLoop)
+  {
+    switch(close) {
+
+      case false:
+        var percentPosition = fileBodyString.indexOf("{",lastPosition);
+        console.log(percentPosition);
+        if(percentPosition == -1)
+        {
+          stopLoop = false;
+        }
+        else{
+
+          if(percentPosition + 1 < fileBodyString.length -1)
+          {
+            lastPosition = percentPosition + 1;
+          }
+          else{
+            stopLoop = false;
+          }
+          startPercentPos = percentPosition;
+          console.log("Start I: "+ startPercentPos);
+          close = true;
+        }
+        break;
+
+      case true:
+        var percentPosition = fileBodyString.indexOf("}",lastPosition);
+        console.log(percentPosition);
+        if(percentPosition == -1)
+        {
+          stopLoop = false;
+        }
+        else{
+
+          if(percentPosition + 1 < fileBodyString.length -1)
+          {
+            lastPosition = percentPosition + 1;
+          }
+          else{
+            stopLoop = false;
+          }
+          closePercentPos = percentPosition;
+          console.log("Stop I: "+ closePercentPos);
+          if(startPercentPos+1 < closePercentPos){
+          graphString = fileBodyString.substring(startPercentPos+1,closePercentPos);
+          console.log(graphString);
+          } 
+          else{
+            graphString = null;
+          }
+          close = false;
+          stopLoop = false;
+        }
+        break;
+
+      default:
+        return null;
+    }
   }
 
-  return dataArray;
+  if(graphString != null)
+  {
+    var graphArray = getGraphArray(graphString);
+
+    if(graphArray == null || graphArray === undefined || graphArray.length == 0)
+    {
+      return null;
+    }
+
+    return graphArray;
+  }
+  else{
+    return null;
+  }
+
+}
+
+function getGraphArray(graphString)
+{
+  var graphsArray = [];
+  var startPercentPos = 0;
+  var closePercentPos = 0;
+  var close = false;
+  var error = false;
+
+  var stopLoop = true;
+  var lastPosition = 0;
+
+  while(stopLoop)
+  {
+      switch(close) {
+        case false:
+          var percentPosition = graphString.indexOf("[",lastPosition);
+          console.log(percentPosition);
+          if(percentPosition == -1)
+          {
+            stopLoop = false;
+          }
+          else{
+
+            if(percentPosition + 1 < graphString.length -1)
+            {
+              lastPosition = percentPosition + 1;
+            }
+            else{
+              stopLoop = false;
+            }
+            startPercentPos = percentPosition;
+            console.log("Start: "+ startPercentPos);
+            close = true;
+          }
+          break;
+        case true:
+          var percentPosition = graphString.indexOf("]",lastPosition);
+          console.log(percentPosition);
+          if(percentPosition == -1)
+          {
+            stopLoop = false;
+          }
+          else{
+
+            if(percentPosition + 1 < graphString.length -1)
+            {
+              lastPosition = percentPosition + 1;
+            }
+            else{
+              stopLoop = false;
+            }
+            closePercentPos = percentPosition;
+            console.log("Stop: "+ closePercentPos);
+            if(startPercentPos + 1 < closePercentPos){
+              var graphs = graphString.substring(startPercentPos+1,closePercentPos);
+              console.log(graphs);
+              var graphSub = graphs.split(',');
+              if(verifyHeaderItem(graphSub[0]))
+              { 
+                graphsArray.push(graphSub[0]);
+              }
+              else{
+                stopLoop = true;
+                error = true;
+              }
+              if(verifyHeaderItem(graphSub[1]))
+              { 
+                graphsArray.push(graphSub[1]);
+              }
+              else{
+                stopLoop = true;
+                error = true;
+              }
+            } 
+            else{
+              stopLoop = true;
+              error = true;
+            }
+            close = false;
+          }
+          break;
+        default:
+          return null;
+      }
+    
+    
+  }
+  console.log("Array: " + graphsArray);
+
+  if(error)
+  {
+    console.log("Entered");
+    return null;
+
+  }
+  return graphsArray;
+
+}
+
+function verifyHeaderItem(item)
+{
+  for(let i = 0; i < verificationHeaderArray.length; i++){
+    if(item.toLowerCase() == verificationHeaderArray[i].toLowerCase())
+    {
+      return true;
+    }
+  }
+  console.log("ERROR");
+  return false;
 }
 
 /*------ Plot Graph-------------------------------------------------------- */
