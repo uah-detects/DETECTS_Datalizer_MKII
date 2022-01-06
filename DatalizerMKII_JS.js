@@ -617,7 +617,7 @@ function plot(xIndex,yIndex)
    $(".element:last").after("<div class='element' id='div_"+ nextindex +"'></div>");
  
    // Adding element to <div>
-   $("#div_" + nextindex).append("<button id='remove_" + nextindex + "' class='remove'>X</button>"+"<div id='txt_"+ nextindex +"' style='width:1200px;height:500px;'></div>");
+   $("#div_" + nextindex).append("<button id='remove_" + nextindex + "' class='remove'>X</button>"+"<b>"+headerDataArray[xIndex]+" vs "+ headerDataArray[yIndex]+"</b>"+"<div id='txt_"+ nextindex +"' style='width:1200px;height:500px;'></div>");
  
   }
 
