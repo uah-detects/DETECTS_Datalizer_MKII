@@ -462,7 +462,7 @@ function plotGraph()
   var xSelection = document.getElementById("selectX");
   var ySelection = document.getElementById("selectY");
   console.log("X = " +xSelection);
-  console.log("Y = " +ySelection)
+  console.log("Y = " +ySelection);
   var xPosition = xSelection.value;
   var yPosition = ySelection.value;
   console.log("X = " + xPosition);
@@ -496,6 +496,90 @@ function plotGraph()
   }
   else
   {
+    plot(xIndex,yIndex);
+  }
+
+}
+
+function plotScienceQuestion()
+{
+  console.log("SQ" + bodyDataArray);
+
+  var sQSelection = document.getElementById("selectScienceQuestion");
+  console.log("SQ = " +sQSelection);
+  var sQPosition = sQSelection.value;
+  console.log("SQ = " + sQPosition);
+
+  
+  var sQIndex = -1;
+  
+  var count = 0;
+
+  do
+  {
+    console.log("Entered");
+    if(sQPosition == scienceQuestionArray[count][0])
+    {
+      sQIndex = count;
+    }
+    count++;
+  }while(count < scienceQuestionArray.length)
+
+  console.log("X = " + sQIndex);
+
+  if (sQIndex == -1)
+  {
+    console.log("Error: No data selected");
+    window.alert("Error: No data selected");
+  }
+  else
+  {
+    console.log(scienceQuestionArray[sQIndex].length);
+
+    for(let i = 1; i <scienceQuestionArray[sQIndex].length; i = i+2)
+    {
+      console.log(scienceQuestionArray[sQIndex][i]+scienceQuestionArray[sQIndex][i + 1]);
+
+      var xIndex = -1;
+      var yIndex = -1;
+      
+      var count = 0;
+    
+      do
+      {
+        console.log(scienceQuestionArray[sQIndex][i]);
+        console.log(scienceQuestionArray[sQIndex][i+1]);
+        console.log(headerDataArray[count]);
+        if(scienceQuestionArray[sQIndex][i] == headerDataArray[count])
+        {
+          xIndex = count;
+        }
+        if(scienceQuestionArray[sQIndex][i+1] == headerDataArray[count])
+        {
+          yIndex = count;
+        }
+        count++;
+      }while(count < headerDataArray.length)
+      
+      if (xIndex == -1 || yIndex == -1)
+      {
+        console.log("Error: No data selected");
+        window.alert("Error: No data selected");
+      }
+      else
+      {
+        plot(xIndex,yIndex);
+      }
+
+    }
+
+    //plot(xIndex,yIndex);
+  }
+
+}
+
+function plot(xIndex,yIndex)
+{
     var trace1 =
     {
         x: bodyDataArray[xIndex],
@@ -530,11 +614,7 @@ function plotGraph()
   Plotly.newPlot("txt_"+ nextindex +"", data);
 ///////////////////////////////////////////////////////////////////////////////////////////// Multi Functionality End //////////////////////////////////////////////////
     
-  }
-
 }
-
-
 
 /////////// Event Listeners ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
