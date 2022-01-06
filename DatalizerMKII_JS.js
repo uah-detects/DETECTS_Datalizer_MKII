@@ -617,9 +617,22 @@ function plot(xIndex,yIndex)
    $(".element:last").after("<div class='element' id='div_"+ nextindex +"'></div>");
  
    // Adding element to <div>
-   $("#div_" + nextindex).append("<div id='txt_"+ nextindex +"' style='width:1200px;height:500px;'></div>");
+   $("#div_" + nextindex).append("<button id='remove_" + nextindex + "' class='remove'>X</button>"+"<div id='txt_"+ nextindex +"' style='width:1200px;height:500px;'></div>");
  
   }
+
+   // Remove element
+ $('.container').on('click','.remove',function(){
+ 
+  var id = this.id;
+  var split_id = id.split("_");
+  var deleteindex = split_id[1];
+
+  // Remove <div> with id
+  $("#div_" + deleteindex).remove();
+
+ }); 
+
 
   Plotly.newPlot("txt_"+ nextindex +"", data);
 ///////////////////////////////////////////////////////////////////////////////////////////// Multi Functionality End //////////////////////////////////////////////////
