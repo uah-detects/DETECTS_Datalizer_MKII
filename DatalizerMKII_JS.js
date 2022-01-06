@@ -3,6 +3,7 @@
 var verificationHeaderArray = [];
 var scienceQuestionArray = [];
 
+//This function excecutes when the configuration file is chosen
 function readConfFile(e) {
   var file = e.target.files[0];
   if (!file) {
@@ -33,19 +34,18 @@ function readConfFile(e) {
       window.alert("Error: Config Syntax Error");
       return;
     }
-    scienceQuestionArray = body;
-    console.log(body);
-    console.log(scienceQuestionArray);
-    console.log("After");
+    scienceQuestionArray = body;           //setting the global science Question Array
     populateScienceQuestionDropdown();
   };
   reader.readAsText(file);
 }
 
+//This function populates the Science question dropdown from the global science question array
 function populateScienceQuestionDropdown()
 {
   var selectScienceQuestion = document.getElementById("selectScienceQuestion");
 
+  //looping through the global science question array setting each position 0 of the 2d array to populate the dropdown
   for(var i = 0; i < scienceQuestionArray.length; i++) {
     var opt = scienceQuestionArray[i][0];
     var el = document.createElement("option");
@@ -56,6 +56,7 @@ function populateScienceQuestionDropdown()
 
 }
 
+//function gets the verification header
 function grabVerHeader(fileContentArray)
 {
   var headerLine = fileContentArray[0];
@@ -84,7 +85,7 @@ function getConfBody(fileContentArray)
   console.log(fileContentArray.length - 1);
   var fileBodyString = fileContentArray[0];
 
-  for(let i = 1; i <= fileContentArray.length - 1; i++)
+  for(let i = 1; i <= fileContentArray.length - 1; i++)      //Looping through the file and putting everything into one singular string
   {
     fileBodyString = fileBodyString + fileContentArray[i];
   }
@@ -94,24 +95,24 @@ function getConfBody(fileContentArray)
   var closePercentPos = 0;
   var close = false;
 
-
   var stopLoop = true;
   var lastPosition = 0;
 
   console.log(fileBodyString.length - 1);
+  //loop searches for the < at the start of a science question. Then makes calls to functions to populate the science question array.
   while(stopLoop)
   {
       switch(close) {
         case false:
           var percentPosition = fileBodyString.indexOf("<",lastPosition);
           console.log(percentPosition);
-          if(percentPosition == -1)
+          if(percentPosition == -1)  //"<" not found
           {
             stopLoop = false;
           }
           else{
 
-            if(percentPosition + 1 < fileBodyString.length -1)
+            if(percentPosition + 1 < fileBodyString.length -1) // testing if the percent position overruns the length of the string
             {
               lastPosition = percentPosition + 1;
             }
@@ -120,19 +121,19 @@ function getConfBody(fileContentArray)
             }
             startPercentPos = percentPosition;
             console.log("Start: "+ startPercentPos);
-            close = true;
+            close = true; //"< found"
           }
           break;
         case true:
           var percentPosition = fileBodyString.indexOf(">",lastPosition);
           console.log(percentPosition);
-          if(percentPosition == -1)
+          if(percentPosition == -1)  //">" not found
           {
             stopLoop = false;
           }
           else{
 
-            if(percentPosition + 1 < fileBodyString.length -1)
+            if(percentPosition + 1 < fileBodyString.length -1) // testing if the percent position overruns the length of the string
             {
               lastPosition = percentPosition + 1;
             }
@@ -141,17 +142,17 @@ function getConfBody(fileContentArray)
             }
             closePercentPos = percentPosition;
             console.log("Stop: "+ closePercentPos);
-            var scienceQuestion = fileBodyString.substring(startPercentPos+1,closePercentPos);
+            var scienceQuestion = fileBodyString.substring(startPercentPos+1,closePercentPos); // holds the actual science question
             console.log(scienceQuestion);
-            var graphArray = getGraphs(closePercentPos,fileBodyString);
-            if(graphArray == null)
+            var graphArray = getGraphs(closePercentPos,fileBodyString); // holds the array of graphs
+            if(graphArray == null) //returns null if an error was found
             {
               return null;
             }
             console.log(graphArray);
             var arrayLineItem = [];
             arrayLineItem.push(scienceQuestion);
-            for(let i = 0; i < graphArray.length; i++)
+            for(let i = 0; i < graphArray.length; i++) // loop pushes each header into the Science question array
             {
               arrayLineItem.push(graphArray[i]);
             }
@@ -163,13 +164,12 @@ function getConfBody(fileContentArray)
         default:
           return null;
       }
-    
-    
   }
 
   return data2DArray;
 }
 
+// this function is intended to specifically isolate "{}" in the file
 function getGraphs(closeAngleBracketPos,fileBodyString)
 {
   var graphString;
@@ -182,6 +182,8 @@ function getGraphs(closeAngleBracketPos,fileBodyString)
   var lastPosition = closeAngleBracketPos;
 
   console.log(fileBodyString.length - 1);
+
+  //loop searches for the { at the start of a graph list. then searches for the }. If found it passes the substring to getGraphArray
   while(stopLoop)
   {
     switch(close) {
@@ -204,7 +206,7 @@ function getGraphs(closeAngleBracketPos,fileBodyString)
           }
           startPercentPos = percentPosition;
           console.log("Start I: "+ startPercentPos);
-          close = true;
+          close = true; //"{" found
         }
         break;
 
@@ -227,7 +229,7 @@ function getGraphs(closeAngleBracketPos,fileBodyString)
           closePercentPos = percentPosition;
           console.log("Stop I: "+ closePercentPos);
           if(startPercentPos+1 < closePercentPos){
-          graphString = fileBodyString.substring(startPercentPos+1,closePercentPos);
+          graphString = fileBodyString.substring(startPercentPos+1,closePercentPos); //getting the substring of the two {}
           console.log(graphString);
           } 
           else{
@@ -271,6 +273,7 @@ function getGraphArray(graphString)
   var stopLoop = true;
   var lastPosition = 0;
 
+  //loop searches for the [ at the start of a graph key. then searches for the ]. If found it splits the substring and verifies that each item is a valid member of the verification header
   while(stopLoop)
   {
       switch(close) {
@@ -297,6 +300,7 @@ function getGraphArray(graphString)
           break;
         case true:
           var percentPosition = graphString.indexOf("]",lastPosition);
+
           console.log(percentPosition);
           if(percentPosition == -1)
           {
@@ -313,11 +317,16 @@ function getGraphArray(graphString)
             }
             closePercentPos = percentPosition;
             console.log("Stop: "+ closePercentPos);
+
             if(startPercentPos + 1 < closePercentPos){
+
               var graphs = graphString.substring(startPercentPos+1,closePercentPos);
+
               console.log(graphs);
+
               var graphSub = graphs.split(',');
-              if(verifyHeaderItem(graphSub[0]))
+
+              if(verifyHeaderItem(graphSub[0]))   //verifying that the item is valid
               { 
                 graphsArray.push(graphSub[0]);
               }
@@ -325,7 +334,8 @@ function getGraphArray(graphString)
                 stopLoop = true;
                 error = true;
               }
-              if(verifyHeaderItem(graphSub[1]))
+
+              if(verifyHeaderItem(graphSub[1]))   //verifying that the item is valid
               { 
                 graphsArray.push(graphSub[1]);
               }
@@ -359,6 +369,7 @@ function getGraphArray(graphString)
 
 }
 
+//this function verifies that the item is in the verification header
 function verifyHeaderItem(item)
 {
   for(let i = 0; i < verificationHeaderArray.length; i++){
@@ -455,6 +466,7 @@ function populateDropdowns(headerArray)
 
 }
 
+//This function is called by the Plot button and is designed to allow the user to manually input a comparison to graph
 function plotGraph()
 {
   console.log(bodyDataArray);
@@ -473,7 +485,7 @@ function plotGraph()
   
   var count = 0;
 
-  do
+  do //this loop finds the position of the label in the header array
   {
     if(xPosition == headerDataArray[count])
     {
@@ -501,6 +513,8 @@ function plotGraph()
 
 }
 
+
+//This function is called by the Plot Science Question button and is designed to plot the science question
 function plotScienceQuestion()
 {
   console.log("SQ" + bodyDataArray);
@@ -515,10 +529,9 @@ function plotScienceQuestion()
   
   var count = 0;
 
-  do
+  do //this loop finds the array that holds the selected science question
   {
-    console.log("Entered");
-    if(sQPosition == scienceQuestionArray[count][0])
+    if(sQPosition == scienceQuestionArray[count][0])   //Since the Science question is always held in position zero of the array Itterate through till the Question is found
     {
       sQIndex = count;
     }
@@ -534,18 +547,16 @@ function plotScienceQuestion()
   }
   else
   {
-    console.log(scienceQuestionArray[sQIndex].length);
 
-    for(let i = 1; i <scienceQuestionArray[sQIndex].length; i = i+2)
+    for(let i = 1; i <scienceQuestionArray[sQIndex].length; i = i+2)     //itterate through the array starting at position 1 skipping every even position as that is the y position of the pair
     {
-      console.log(scienceQuestionArray[sQIndex][i]+scienceQuestionArray[sQIndex][i + 1]);
 
       var xIndex = -1;
       var yIndex = -1;
       
       var count = 0;
     
-      do
+      do   // find the header item in the header array
       {
         console.log(scienceQuestionArray[sQIndex][i]);
         console.log(scienceQuestionArray[sQIndex][i+1]);
@@ -560,11 +571,11 @@ function plotScienceQuestion()
         }
         count++;
       }while(count < headerDataArray.length)
-      
-      if (xIndex == -1 || yIndex == -1)
+
+      if (xIndex == -1 || yIndex == -1)   //Header not found in the data set
       {
-        console.log("Error: No data selected");
-        window.alert("Error: No data selected");
+        console.log("Error: No Header found in the data set");
+        window.alert("Error: No Header found in the data set");
       }
       else
       {
@@ -572,12 +583,11 @@ function plotScienceQuestion()
       }
 
     }
-
-    //plot(xIndex,yIndex);
   }
 
 }
 
+//this function is used to plot the x, y data it accepts as parameters. It is built with the ability to plot more than one singular graph
 function plot(xIndex,yIndex)
 {
     var trace1 =
@@ -590,8 +600,6 @@ function plot(xIndex,yIndex)
     console.log('Called');
     var data = [trace1];
 
-   // Plotly.newPlot("txt_1", data);
-
 ///////////////////////////////////////////////////////////////////////////////////////////// Multi Functionality Start ///////////////////////////////////////////////
   // Finding total number of elements added
   var total_element = $(".element").length;
@@ -602,6 +610,7 @@ function plot(xIndex,yIndex)
   var nextindex = Number(split_id[1]) + 1;
 
   var max = 8; // Setting the maximum number of the graphs that the program will allow
+
   // Check total number elements
   if(total_element < max ){
    // Adding new div container after last occurance of element class
@@ -611,6 +620,7 @@ function plot(xIndex,yIndex)
    $("#div_" + nextindex).append("<div id='txt_"+ nextindex +"' style='width:1200px;height:500px;'></div>");
  
   }
+
   Plotly.newPlot("txt_"+ nextindex +"", data);
 ///////////////////////////////////////////////////////////////////////////////////////////// Multi Functionality End //////////////////////////////////////////////////
     
