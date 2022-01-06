@@ -1,6 +1,7 @@
 /*------ Parse Config File------------------------------------------------- */
 
 var verificationHeaderArray = [];
+var scienceQuestionArray = [];
 
 function readConfFile(e) {
   var file = e.target.files[0];
@@ -32,11 +33,27 @@ function readConfFile(e) {
       window.alert("Error: Config Syntax Error");
       return;
     }
+    scienceQuestionArray = body;
     console.log(body);
+    console.log(scienceQuestionArray);
     console.log("After");
-
+    populateScienceQuestionDropdown();
   };
   reader.readAsText(file);
+}
+
+function populateScienceQuestionDropdown()
+{
+  var selectScienceQuestion = document.getElementById("selectScienceQuestion");
+
+  for(var i = 0; i < scienceQuestionArray.length; i++) {
+    var opt = scienceQuestionArray[i][0];
+    var el = document.createElement("option");
+    el.textContent = opt;
+    el.value = opt;
+    selectScienceQuestion.appendChild(el);
+  }
+
 }
 
 function grabVerHeader(fileContentArray)
@@ -84,23 +101,6 @@ function getConfBody(fileContentArray)
   console.log(fileBodyString.length - 1);
   while(stopLoop)
   {
-    /*var percentPosition = fileBodyString.indexOf("<",lastPosition);
-    console.log(percentPosition);
-    if(percentPosition == -1)
-    {
-      stopLoop = false;
-    }
-    else{
-
-      if(percentPosition + 1 < fileBodyString.length -1)
-      {
-        lastPosition = percentPosition + 1;
-      }
-      else{
-        stopLoop = false;
-      }
-    }*/
-
       switch(close) {
         case false:
           var percentPosition = fileBodyString.indexOf("<",lastPosition);
@@ -166,24 +166,6 @@ function getConfBody(fileContentArray)
     
     
   }
-
-
-
-  /*for(let i = 2; i <fileContentArray.length;i++)
-  {
-    //file
-  }
-  
-  for(let j = 1; j < fileContentArray.length - 1; j++)            //First loop is looping through the file line by line
-  {
-    var parseLine = fileContentArray[j].split(',');
-
-    for(let k = 0; k < headerSize; k++)                       //Looping through each line item, item by item
-    {
-      dataArray[k].push(parseLine[k]);
-    }
-
-  }*/
 
   return data2DArray;
 }
@@ -475,7 +457,6 @@ function populateDropdowns(headerArray)
 
 function plotGraph()
 {
-
   console.log(bodyDataArray);
 
   var xSelection = document.getElementById("selectX");
