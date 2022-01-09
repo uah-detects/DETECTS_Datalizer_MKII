@@ -639,6 +639,11 @@ function plot(xIndex,yIndex)
     
 }
 
+function clearGraphs()
+{
+  $('.container').html("<div class='element' id='div_1'></div><div id='txt_1' style='width:1200px;height:500px;'></div>");
+}
+
 /////////// Event Listeners ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 document.getElementById('file-input').addEventListener('change', readDataFile, false);  // Listener for the Data File input
