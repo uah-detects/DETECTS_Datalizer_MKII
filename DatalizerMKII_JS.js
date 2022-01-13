@@ -709,13 +709,13 @@ $('#btnExport').click(function(){
       var divGraph = $('#graph');
       Plotly.toImage('txt_'+ i, { format: document.getElementById('imageFileType').value, width: 1200, height: 500 }).then(function (dataURL) {
         console.log(dataURL);
-        dataURLtoFile(dataURL, "File");
+        dataURLtoFile(dataURL, "File", i - 1);
       });
     }
 
 });
 
-function  dataURLtoFile(dataUrl, fileName){
+function  dataURLtoFile(dataUrl, fileName, graphNumber){
      var arr = dataUrl.split(','), mime = arr[0].match(/:(.*?);/)[1],
          bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
      while(n--){
@@ -723,7 +723,7 @@ function  dataURLtoFile(dataUrl, fileName){
      }
      var bb = new File([u8arr], fileName, {type:mime});
      var a = document.createElement('a');
-     a.download = 'download.' + document.getElementById('imageFileType').value;
+     a.download = 'graph '+graphNumber+'.' + document.getElementById('imageFileType').value;
      a.href = window.URL.createObjectURL(bb);
      a.click();
 
