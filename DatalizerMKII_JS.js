@@ -590,6 +590,7 @@ function plotScienceQuestion()
 //this function is used to plot the x, y data it accepts as parameters. It is built with the ability to plot more than one singular graph
 function plot(xIndex,yIndex)
 {
+  var titleTEXT = headerDataArray[xIndex]+" vs "+ headerDataArray[yIndex];
     var trace1 =
     {
         x: bodyDataArray[xIndex],
@@ -597,6 +598,39 @@ function plot(xIndex,yIndex)
         type: 'scatter'
 
     };
+
+    var layout = {
+      title: {
+        text: titleTEXT,
+        font: {
+          family: 'Courier New, monospace',
+          size: 24
+        },
+        xref: 'paper',
+        x: 0.05,
+      },
+      xaxis: {
+        title: {
+          text: headerDataArray[xIndex],
+          font: {
+            family: 'Courier New, monospace',
+            size: 18,
+            color: '#7f7f7f'
+          }
+        },
+      },
+      yaxis: {
+        title: {
+          text: headerDataArray[yIndex],
+          font: {
+            family: 'Courier New, monospace',
+            size: 18,
+            color: '#7f7f7f'
+          }
+        }
+      }
+    };
+
     console.log('Called');
     var data = [trace1];
 
@@ -617,14 +651,85 @@ function plot(xIndex,yIndex)
    $(".element:last").after("<div class='element' id='div_"+ nextindex +"'></div>");
  
    // Adding element to <div>
-   $("#div_" + nextindex).append("<div id='txt_"+ nextindex +"' style='width:1200px;height:500px;'></div>");
+   $("#div_" + nextindex).append("<button id='remove_" + nextindex + "' class='remove'>X</button>"+"<div id='txt_"+ nextindex +"' style='width:1200px;height:500px;'></div>");
  
   }
 
-  Plotly.newPlot("txt_"+ nextindex +"", data);
+   // Remove element
+ $('.container').on('click','.remove',function(){
+ 
+  var id = this.id;
+  var split_id = id.split("_");
+  var deleteindex = split_id[1];
+
+  // Remove <div> with id
+  $("#div_" + deleteindex).remove();
+
+ }); 
+
+
+  Plotly.newPlot("txt_"+ nextindex +"", data,layout);
 ///////////////////////////////////////////////////////////////////////////////////////////// Multi Functionality End //////////////////////////////////////////////////
     
 }
+
+function clearGraphs()
+{
+  $('.container').html("<div class='element' id='div_1'></div><div id='txt_1' style='width:1200px;height:500px;'></div>");
+}
+
+function allScreenshot()
+{
+  var myPlot = document.getElementById('txt_2');
+  myPlot.on('plotly_relayout', function(data){
+    Plotly.toImage(data).then((dataURI) => {
+      console.log(dataURI);
+    });
+  });
+}
+
+$('#btnExport').click(function(){
+  //var title = $("<p>Image Here</p>");
+  //$("#content").append(title);
+    // Finding total number of elements added
+    var total_element = $(".element").length;
+ 
+    // last <div> with element class id
+    var lastid = $(".element:last").attr("id");
+    var split_id = lastid.split("_");
+    var nextindex = Number(split_id[1]);
+    console.log(nextindex);
+    console.log(document.getElementById('imageFileType').value);
+    if(nextindex < 2)
+    {
+      window.alert("Error: You have created no graphs.");
+    }
+    for(let i =2; i <= nextindex; i++)
+    {
+      var divGraph = $('#graph');
+      Plotly.toImage('txt_'+ i, { format: document.getElementById('imageFileType').value, width: 1200, height: 500 }).then(function (dataURL) {
+        console.log(dataURL);
+        dataURLtoFile(dataURL, "File", i - 1);
+      });
+    }
+
+});
+
+function  dataURLtoFile(dataUrl, fileName, graphNumber){
+     var arr = dataUrl.split(','), mime = arr[0].match(/:(.*?);/)[1],
+         bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+     while(n--){
+        u8arr[n] = bstr.charCodeAt(n);
+     }
+     var bb = new File([u8arr], fileName, {type:mime});
+     var a = document.createElement('a');
+     a.download = 'graph '+graphNumber+'.' + document.getElementById('imageFileType').value;
+     a.href = window.URL.createObjectURL(bb);
+     a.click();
+
+     return;
+
+ }
 
 /////////// Event Listeners ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
