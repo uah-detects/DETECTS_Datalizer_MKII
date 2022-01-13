@@ -678,6 +678,54 @@ function clearGraphs()
   $('.container').html("<div class='element' id='div_1'></div><div id='txt_1' style='width:1200px;height:500px;'></div>");
 }
 
+function allScreenshot()
+{
+  var myPlot = document.getElementById('txt_2');
+  myPlot.on('plotly_relayout', function(data){
+    Plotly.toImage(data).then((dataURI) => {
+      console.log(dataURI);
+    });
+  });
+}
+
+$('#btnExport').click(function(){
+  //var title = $("<p>Image Here</p>");
+  //$("#content").append(title);
+    // Finding total number of elements added
+    var total_element = $(".element").length;
+ 
+    // last <div> with element class id
+    var lastid = $(".element:last").attr("id");
+    var split_id = lastid.split("_");
+    var nextindex = Number(split_id[1]);
+    console.log(nextindex);
+    for(let i =2; i <= nextindex; i++)
+    {
+      var divGraph = $('#graph');
+      Plotly.toImage('txt_'+ i, { format: 'png', width: 1200, height: 500 }).then(function (dataURL) {
+        console.log(dataURL);
+        dataURLtoFile(dataURL, "File");
+      });
+    }
+
+});
+
+function  dataURLtoFile(dataUrl, fileName){
+     var arr = dataUrl.split(','), mime = arr[0].match(/:(.*?);/)[1],
+         bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+     while(n--){
+        u8arr[n] = bstr.charCodeAt(n);
+     }
+     var bb = new File([u8arr], fileName, {type:mime});
+     var a = document.createElement('a');
+     a.download = 'download.png';
+     a.href = window.URL.createObjectURL(bb);
+     a.click();
+
+     return;
+
+ }
+
 /////////// Event Listeners ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 document.getElementById('file-input').addEventListener('change', readDataFile, false);  // Listener for the Data File input
