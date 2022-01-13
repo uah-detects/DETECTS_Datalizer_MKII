@@ -699,10 +699,15 @@ $('#btnExport').click(function(){
     var split_id = lastid.split("_");
     var nextindex = Number(split_id[1]);
     console.log(nextindex);
+    console.log(document.getElementById('imageFileType').value);
+    if(nextindex < 2)
+    {
+      window.alert("Error: You have created no graphs.");
+    }
     for(let i =2; i <= nextindex; i++)
     {
       var divGraph = $('#graph');
-      Plotly.toImage('txt_'+ i, { format: 'png', width: 1200, height: 500 }).then(function (dataURL) {
+      Plotly.toImage('txt_'+ i, { format: document.getElementById('imageFileType').value, width: 1200, height: 500 }).then(function (dataURL) {
         console.log(dataURL);
         dataURLtoFile(dataURL, "File");
       });
@@ -718,7 +723,7 @@ function  dataURLtoFile(dataUrl, fileName){
      }
      var bb = new File([u8arr], fileName, {type:mime});
      var a = document.createElement('a');
-     a.download = 'download.png';
+     a.download = 'download.' + document.getElementById('imageFileType').value;
      a.href = window.URL.createObjectURL(bb);
      a.click();
 
