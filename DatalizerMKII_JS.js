@@ -590,6 +590,7 @@ function plotScienceQuestion()
 //this function is used to plot the x, y data it accepts as parameters. It is built with the ability to plot more than one singular graph
 function plot(xIndex,yIndex)
 {
+  var titleTEXT = headerDataArray[xIndex]+" vs "+ headerDataArray[yIndex];
     var trace1 =
     {
         x: bodyDataArray[xIndex],
@@ -597,6 +598,39 @@ function plot(xIndex,yIndex)
         type: 'scatter'
 
     };
+
+    var layout = {
+      title: {
+        text: titleTEXT,
+        font: {
+          family: 'Courier New, monospace',
+          size: 24
+        },
+        xref: 'paper',
+        x: 0.05,
+      },
+      xaxis: {
+        title: {
+          text: headerDataArray[xIndex],
+          font: {
+            family: 'Courier New, monospace',
+            size: 18,
+            color: '#7f7f7f'
+          }
+        },
+      },
+      yaxis: {
+        title: {
+          text: headerDataArray[yIndex],
+          font: {
+            family: 'Courier New, monospace',
+            size: 18,
+            color: '#7f7f7f'
+          }
+        }
+      }
+    };
+
     console.log('Called');
     var data = [trace1];
 
@@ -617,7 +651,7 @@ function plot(xIndex,yIndex)
    $(".element:last").after("<div class='element' id='div_"+ nextindex +"'></div>");
  
    // Adding element to <div>
-   $("#div_" + nextindex).append("<button id='remove_" + nextindex + "' class='remove'>X</button>"+"<b>"+headerDataArray[xIndex]+" vs "+ headerDataArray[yIndex]+"</b>"+"<div id='txt_"+ nextindex +"' style='width:1200px;height:500px;'></div>");
+   $("#div_" + nextindex).append("<button id='remove_" + nextindex + "' class='remove'>X</button>"+"<div id='txt_"+ nextindex +"' style='width:1200px;height:500px;'></div>");
  
   }
 
@@ -634,7 +668,7 @@ function plot(xIndex,yIndex)
  }); 
 
 
-  Plotly.newPlot("txt_"+ nextindex +"", data);
+  Plotly.newPlot("txt_"+ nextindex +"", data,layout);
 ///////////////////////////////////////////////////////////////////////////////////////////// Multi Functionality End //////////////////////////////////////////////////
     
 }
