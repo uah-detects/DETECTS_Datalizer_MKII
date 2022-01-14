@@ -466,6 +466,8 @@ function populateDropdowns(headerArray)
 
 }
 
+
+
 //This function is called by the Plot button and is designed to allow the user to manually input a comparison to graph
 function plotGraph()
 {
@@ -651,7 +653,7 @@ function plot(xIndex,yIndex)
    $(".element:last").after("<div class='element' id='div_"+ nextindex +"'></div>");
  
    // Adding element to <div>
-   $("#div_" + nextindex).append("<button id='remove_" + nextindex + "' class='remove'>X</button>"+"<div id='txt_"+ nextindex +"' style='width:1200px;height:500px;'></div>");
+   $("#div_" + nextindex).append("<div class='pt-4'><button id='remove_" + nextindex + "' class='remove'>X</button>"+"<div class=' pt-1 w-75 'id='txt_"+ nextindex +"' style='height:500px;'></div> </div>");
  
   }
 
