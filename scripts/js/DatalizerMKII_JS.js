@@ -1,3 +1,10 @@
+
+/*------Call On Page Load------------------------------------------------- */
+window.onload = function ()
+{
+  console.log("ON PAGE LOAD");
+};
+
 /*------ Parse Config File------------------------------------------------- */
 
 var verificationHeaderArray = [];
