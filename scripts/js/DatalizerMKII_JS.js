@@ -24,7 +24,7 @@ function readConfFile(e) {
     var headerLine = grabVerHeader(fileContentArray);
 
     console.log(headerLine);
-    if (headerLine == null)         //Testing to see if a verification header was returneed by grabVerHeader
+    if (headerLine == null)         //Testing to see if a verification header was returned by grabVerHeader
     {
       return { 
         error: true,
@@ -385,7 +385,7 @@ function verifyHeaderItem(item)
       return true;
     }
   }
-  console.log("ERROR");
+  console.log("ERROR: Selected Item not in verification Header.");
   return false;
 }
 
