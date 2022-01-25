@@ -401,6 +401,12 @@ function readDataFile(e) {
   var reader = new FileReader();
   reader.onload = function(e) {
     var fileContentArray = this.result.split(/\r\n|\n/);
+    if( false == verifyCSVHeader(fileContentArray[0]))
+    {
+      console.log("Error: CSV Header Not Valid");
+      window.alert("Error: CSV Header Not Valid");
+      return;
+    }
     var headerLine = splitHeader(fileContentArray);
     console.log("in read --> " + headerLine);
     var headerSize = headerLine.length;
@@ -506,7 +512,20 @@ function populateDropdowns(headerArray)
 
 }
 
+function verifyCSVHeader(stringToVer)
+{
+  //This is the string that is a the top of the RAW CSV file
+  var verificationString = "time,lasttime,lat,lng,speed,course,altitude,Temperature (C),Pressure (Pa)";
 
+  if (verificationString == stringToVer)
+  {
+    return true;
+  }
+  else
+  {
+    return false;
+  }
+}
 
 //This function is called by the Plot button and is designed to allow the user to manually input a comparison to graph
 function plotGraph()
