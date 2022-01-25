@@ -410,6 +410,39 @@ function readDataFile(e) {
     var bodyArray = splitBody(headerSize, fileContentArray);
     console.log(bodyArray);
 
+    headerLine.push("Ascent Rate (M/Sec)");
+    //console.log(headerLine);
+
+    //calcAscentRate(altitudeOne,altitudeTwo,dateOne,dateTwo)
+    //scienceQuestionArray[sQIndex][i]
+    //console.log(bodyDataArray);
+   // console.log(bodyDataArray.length);
+    for(let j = 0; j < bodyArray[0].length; j++)            //First loop is looping through the file line by line
+    {
+      if(j == 0)
+      {
+        //insert an array
+        for(let i = 0; i<= 2; i++)
+        {
+          bodyArray.push([]);
+        }
+
+        bodyArray[9][0] = 0; //adding the zero to the ascent rate column
+      }
+      if(j >= 1)
+      {
+        /*time,lasttime,lat,lng,speed,course,altitude,Temperature (C),Pressure (Pa),Ascent Rate (M/Sec)*/
+        /* 0       1     2   3     4     5       6         7              8                 9*/
+        var altitudeOne = bodyArray[6][j-1];
+        var altitudeTwo = bodyArray[6][j];
+        var dateOne = bodyArray[0][j-1];
+        var dateTwo = bodyArray[0][j];
+        var ascentRate = calcAscentRate(altitudeOne,altitudeTwo,dateOne,dateTwo);
+        bodyArray[9][j] = ascentRate;        //Adding the ascentRate to the bodyArray
+      }
+
+    }
+    console.log(bodyArray);
     //Setting global arrays
     headerDataArray = headerLine;
     bodyDataArray = bodyArray;
@@ -437,7 +470,7 @@ function splitBody(headerSize,fileContentArray)
   }
   console.log(dataArray);
   
-  for(let j = 1; j < fileContentArray.length - 1; j++)            //First loop is looping through the file line by line
+  for(let j = 1; j < fileContentArray.length - 1; j++)            //First loop is looping through the file line by line Note: loop starts at one to leave off the header title that is stored in position 0 of the subarray
   {
     var parseLine = fileContentArray[j].split(',');
 
@@ -739,6 +772,28 @@ function  dataURLtoFile(dataUrl, fileName, graphNumber){
      return;
 
  }
+ /*------Formulas-------------------------------------------------------- */
+
+  function calcAscentRate(altitudeOne,altitudeTwo,dateOne,dateTwo)
+  {
+    var timeDifference = calcTimeDif(dateOne,dateTwo);
+    var altitudeDif = altitudeDifference(altitudeOne,altitudeTwo);
+    return (altitudeDif / (timeDifference))*1000;
+  }
+
+  function calcTimeDif(dateOne,dateTwo)
+  {
+    var dateOneConvert = new Date(dateOne);
+    var dateTwoConvert = new Date(dateTwo);
+    var Difference_In_Time = dateTwoConvert.getTime() - dateOneConvert.getTime();
+    return Difference_In_Time;
+  }
+
+  function altitudeDifference(y1,y2)
+  {
+    var total = y2 - y1;
+    return total;
+  }
 
 /////////// Event Listeners ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
