@@ -400,6 +400,10 @@ function readDataFile(e) {
   var reader = new FileReader();
   reader.onload = function(e) {
     var fileContentArray = this.result.split(/\r\n|\n/);
+
+
+  if (calculationSwitchState == true)
+  {
     if( false == verifyCSVHeader(fileContentArray[0]))
     {
       console.log("Error: CSV Header Not Valid");
@@ -415,48 +419,54 @@ function readDataFile(e) {
     var bodyArray = splitBody(headerSize, fileContentArray);
     console.log(bodyArray);
 
-    headerLine.push("Ascent Rate (M/Sec)");
+    
     //console.log(headerLine);
-
-  if (calculationSwitchState == true)
-  {
-    console.log("Active");
-  }
-  else if (calculationSwitchState == false)
-  {
-    console.log("Inactive");
-  }
-
-  console.log("Saved");
+    headerLine.push("Ascent Rate (M/Sec)");
     //calcAscentRate(altitudeOne,altitudeTwo,dateOne,dateTwo)
     //scienceQuestionArray[sQIndex][i]
     //console.log(bodyDataArray);
    // console.log(bodyDataArray.length);
-    for(let j = 0; j < bodyArray[0].length; j++)            //First loop is looping through the file line by line
-    {
-      if(j == 0)
-      {
-        //insert an array
-        for(let i = 0; i<= 2; i++)
-        {
-          bodyArray.push([]);
-        }
+   for(let j = 0; j < bodyArray[0].length; j++)            //First loop is looping through the file line by line
+   {
+     if(j == 0)
+     {
+       //insert an array
+       for(let i = 0; i<= 2; i++)
+       {
+         bodyArray.push([]);
+       }
 
-        bodyArray[9][0] = 0; //adding the zero to the ascent rate column
-      }
-      if(j >= 1)
-      {
-        /*time,lasttime,lat,lng,speed,course,altitude,Temperature (C),Pressure (Pa),Ascent Rate (M/Sec)*/
-        /* 0       1     2   3     4     5       6         7              8                 9*/
-        var altitudeOne = bodyArray[6][j-1];
-        var altitudeTwo = bodyArray[6][j];
-        var dateOne = bodyArray[0][j-1];
-        var dateTwo = bodyArray[0][j];
-        var ascentRate = calcAscentRate(altitudeOne,altitudeTwo,dateOne,dateTwo);
-        bodyArray[9][j] = ascentRate;        //Adding the ascentRate to the bodyArray
-      }
+       bodyArray[9][0] = 0; //adding the zero to the ascent rate column
+     }
+     if(j >= 1)
+     {
+       /*time,lasttime,lat,lng,speed,course,altitude,Temperature (C),Pressure (Pa),Ascent Rate (M/Sec)*/
+       /* 0       1     2   3     4     5       6         7              8                 9*/
+       var altitudeOne = bodyArray[6][j-1];
+       var altitudeTwo = bodyArray[6][j];
+       var dateOne = bodyArray[0][j-1];
+       var dateTwo = bodyArray[0][j];
+       var ascentRate = calcAscentRate(altitudeOne,altitudeTwo,dateOne,dateTwo);
+       bodyArray[9][j] = ascentRate;        //Adding the ascentRate to the bodyArray
+     }
 
-    }
+   }
+  }
+  else
+  {
+    var headerLine = splitHeader(fileContentArray);
+    console.log("in read --> " + headerLine);
+    var headerSize = headerLine.length;
+    console.log(headerSize);
+
+    //parsing the body of the data
+    var bodyArray = splitBody(headerSize, fileContentArray);
+    console.log(bodyArray);
+
+    
+    //console.log(headerLine);
+  }
+
     console.log(bodyArray);
     //Setting global arrays
     headerDataArray = headerLine;
@@ -503,6 +513,9 @@ function populateDropdowns(headerArray)
 {
   var selectX = document.getElementById("selectX");
   var selectY = document.getElementById("selectY");
+
+
+ // document.querySelectorAll('#selectX').forEach(selectX => selectX.removeAttribute())
 
   for(var i = 0; i < headerArray.length; i++) {
     var opt = headerArray[i];
