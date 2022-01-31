@@ -1,4 +1,9 @@
-
+/*------Global Values------------------------------------------------- */
+var verificationHeaderArray = [];
+var scienceQuestionArray = [];
+var headerDataArray = [];
+var bodyDataArray = [];
+var calculationSwitchState = false;
 /*------Call On Page Load------------------------------------------------- */
 window.onload = function ()
 {
@@ -6,10 +11,6 @@ window.onload = function ()
 };
 
 /*------ Parse Config File------------------------------------------------- */
-
-var verificationHeaderArray = [];
-var scienceQuestionArray = [];
-
 //This function excecutes when the configuration file is chosen
 function readConfFile(e) {
   var file = e.target.files[0];
@@ -390,8 +391,6 @@ function verifyHeaderItem(item)
 }
 
 /*------ Plot Graph-------------------------------------------------------- */
-var headerDataArray = [];
-var bodyDataArray = [];
 
 function readDataFile(e) {
   var file = e.target.files[0];
@@ -419,6 +418,16 @@ function readDataFile(e) {
     headerLine.push("Ascent Rate (M/Sec)");
     //console.log(headerLine);
 
+  if (calculationSwitchState == true)
+  {
+    console.log("Active");
+  }
+  else if (calculationSwitchState == false)
+  {
+    console.log("Inactive");
+  }
+
+  console.log("Saved");
     //calcAscentRate(altitudeOne,altitudeTwo,dateOne,dateTwo)
     //scienceQuestionArray[sQIndex][i]
     //console.log(bodyDataArray);
@@ -819,3 +828,13 @@ function  dataURLtoFile(dataUrl, fileName, graphNumber){
 document.getElementById('file-input').addEventListener('change', readDataFile, false);  // Listener for the Data File input
 
 document.getElementById('CONFIG_FILE').addEventListener('change', readConfFile, false);  // Listener for the Data File input
+
+document.getElementById('mySwitch').addEventListener('change', function(){
+if(calculationSwitchState == false)
+{
+  calculationSwitchState = true;
+}
+else{
+  calculationSwitchState = false;
+}
+}, false);
