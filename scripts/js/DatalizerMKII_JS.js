@@ -845,7 +845,7 @@ let csvContent = "data:text/csv;charset=utf-8,"
     var encodedUri = encodeURI(csvContent);
     var link = document.createElement("a");
     link.setAttribute("href", encodedUri);
-    link.setAttribute("download", "my_data.csv");
+    link.setAttribute("download", "balloonData.csv");
     document.body.appendChild(link); // Required for FF
     
     link.click(); 
