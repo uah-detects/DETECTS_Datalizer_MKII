@@ -509,11 +509,28 @@ function splitBody(headerSize,fileContentArray)
   return dataArray;
 }
 
+function removeOptions(selectElement) {
+  var i, L = selectElement.options.length - 1;
+  for(i = L; i >= 0; i--) {
+     selectElement.remove(i);
+  }
+}
+
 function populateDropdowns(headerArray)
 {
   var selectX = document.getElementById("selectX");
   var selectY = document.getElementById("selectY");
 
+  removeOptions(document.getElementById('selectX'));
+  removeOptions(document.getElementById('selectY'));
+
+  var elX = document.createElement("option");
+  elX.textContent = "Choose an X";
+  selectX.appendChild(elX);
+
+  var elY = document.createElement("option");
+  elY.textContent = "Choose a Y";
+  selectY.appendChild(elY);
 
  // document.querySelectorAll('#selectX').forEach(selectX => selectX.removeAttribute())
 
