@@ -853,6 +853,17 @@ function  dataURLtoFile(dataUrl, fileName, graphNumber){
     return total;
   }
 
+  function calcDistanceTraveled(currentLat,prevLat,currentLon,prevLon)
+  {
+    var p = currentLat - prevLat;
+    var t = currentLon - prevLon;
+    var pSQ = Math.pow(p,2);
+    var tSQ = Math.pow(t,2);
+    var d = Math.sqrt(pSQ+tSQ);
+    dMeters = d * 111111;
+    return dMeters
+  }
+
 /////////// Event Listeners ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 document.getElementById('file-input').addEventListener('change', readDataFile, false);  // Listener for the Data File input
