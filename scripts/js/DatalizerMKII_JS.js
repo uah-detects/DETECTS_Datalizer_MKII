@@ -422,6 +422,8 @@ function readDataFile(e) {
     
     //console.log(headerLine);
     headerLine.push("Ascent Rate (M/Sec)");
+    headerLine.push("Distance Traveled (M)");
+    headerLine.push("//NEW COURSE\\\\ ");
     //calcAscentRate(altitudeOne,altitudeTwo,dateOne,dateTwo)
     //scienceQuestionArray[sQIndex][i]
     //console.log(bodyDataArray);
@@ -430,27 +432,39 @@ function readDataFile(e) {
    {
      if(j == 0)
      {
-       //insert an array
+       //inserting 3 arrays to hold all calculated data
        for(let i = 0; i<= 2; i++)
        {
          bodyArray.push([]);
        }
 
        bodyArray[9][0] = 0; //adding the zero to the ascent rate column
+       bodyArray[10][0] = 0;
      }
      if(j >= 1)
      {
-       /*time,lasttime,lat,lng,speed,course,altitude,Temperature (C),Pressure (Pa),Ascent Rate (M/Sec)*/
-       /* 0       1     2   3     4     5       6         7              8                 9*/
-       var altitudeOne = bodyArray[6][j-1];
-       var altitudeTwo = bodyArray[6][j];
-       var dateOne = bodyArray[0][j-1];
-       var dateTwo = bodyArray[0][j];
-       var ascentRate = calcAscentRate(altitudeOne,altitudeTwo,dateOne,dateTwo);
-       bodyArray[9][j] = ascentRate;        //Adding the ascentRate to the bodyArray
-     }
+       /*time,lasttime,lat,lng,speed,course,altitude,Temperature (C),Pressure (Pa),Ascent Rate (M/Sec),Distance Traveled (M)*/
+       /* 0       1     2   3     4     5       6         7              8                 9                  10*/
+       
+      //Calculate Ascent Rate
+      var altitudeOne = bodyArray[6][j-1];
+      var altitudeTwo = bodyArray[6][j];
+      var dateOne = bodyArray[0][j-1];
+      var dateTwo = bodyArray[0][j];
+      var ascentRate = calcAscentRate(altitudeOne,altitudeTwo,dateOne,dateTwo);
+      bodyArray[9][j] = ascentRate;        //Adding the ascentRate to the bodyArray
 
+      //Calculate Distance Travelled
+      var prevLat = bodyArray[2][j-1];
+      var currentLat = bodyArray[2][j];
+      var prevLon = bodyArray[3][j-1];
+      var currentLon = bodyArray[3][j];
+      bodyArray[10][j] = calcDistanceTraveled(currentLat,prevLat,currentLon,prevLon);
+     }
    }
+console.log(bodyArray);
+   
+
   }
   else
   {
