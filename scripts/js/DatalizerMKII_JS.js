@@ -419,15 +419,11 @@ function readDataFile(e) {
     var bodyArray = splitBody(headerSize, fileContentArray);
     console.log(bodyArray);
 
-    
-    //console.log(headerLine);
+
     headerLine.push("Ascent Rate (M/Sec)");
     headerLine.push("Distance Traveled (M)");
-    headerLine.push("//NEW COURSE\\\\ ");
-    //calcAscentRate(altitudeOne,altitudeTwo,dateOne,dateTwo)
-    //scienceQuestionArray[sQIndex][i]
-    //console.log(bodyDataArray);
-   // console.log(bodyDataArray.length);
+    headerLine.push("Absolute Value Course");
+
    for(let j = 0; j < bodyArray[0].length; j++)            //First loop is looping through the file line by line
    {
      if(j == 0)
@@ -439,12 +435,13 @@ function readDataFile(e) {
        }
 
        bodyArray[9][0] = 0; //adding the zero to the ascent rate column
-       bodyArray[10][0] = 0;
+       bodyArray[10][0] = 0; //adding the zero to the Distance Travelled column
+       bodyArray[11][0] = 0; //adding the zero to the Absolute Value Course
      }
      if(j >= 1)
      {
-       /*time,lasttime,lat,lng,speed,course,altitude,Temperature (C),Pressure (Pa),Ascent Rate (M/Sec),Distance Traveled (M)*/
-       /* 0       1     2   3     4     5       6         7              8                 9                  10*/
+       /*time,lasttime,lat,lng,speed,course,altitude,Temperature (C),Pressure (Pa),Ascent Rate (M/Sec),Distance Traveled (M),Absolute Value Course*/
+       /* 0       1     2   3     4     5       6         7              8                 9                  10                        11*/
        
       //Calculate Ascent Rate
       var altitudeOne = bodyArray[6][j-1];
@@ -462,7 +459,9 @@ function readDataFile(e) {
       bodyArray[10][j] = calcDistanceTraveled(currentLat,prevLat,currentLon,prevLon);
 
       // COURSE
-      bodyArray[11][j] = "TBF";
+      var prevCourse = bodyArray[5][j-1];
+      var currentCourse = bodyArray[5][j];
+      bodyArray[11][j] = calcAbsoluteValueCourse(prevCourse,currentCourse);
      }
    }
 console.log(bodyArray);
@@ -548,8 +547,6 @@ function populateDropdowns(headerArray)
   var elY = document.createElement("option");
   elY.textContent = "Choose a Y";
   selectY.appendChild(elY);
-
- // document.querySelectorAll('#selectX').forEach(selectX => selectX.removeAttribute())
 
   for(var i = 0; i < headerArray.length; i++) {
     var opt = headerArray[i];
@@ -917,6 +914,17 @@ function  dataURLtoFile(dataUrl, fileName, graphNumber){
     var d = Math.sqrt(pSQ+tSQ);
     dMeters = d * 111111;
     return dMeters
+  }
+
+  function calcAbsoluteValueCourse(prevCourse,currentCourse)
+  {
+    var courseDif = currentCourse - prevCourse;
+    if(courseDif > 180)
+    {
+      courseDif = 360 - courseDif;
+    }
+    courseDif = Math.abs(courseDif);
+    return courseDif;
   }
 
 /////////// Event Listeners ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
