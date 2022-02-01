@@ -460,6 +460,9 @@ function readDataFile(e) {
       var prevLon = bodyArray[3][j-1];
       var currentLon = bodyArray[3][j];
       bodyArray[10][j] = calcDistanceTraveled(currentLat,prevLat,currentLon,prevLon);
+
+      // COURSE
+      bodyArray[11][j] = "TBF";
      }
    }
 console.log(bodyArray);
@@ -829,6 +832,26 @@ $('#btnExport').click(function(){
 
 });
 
+$('#btnExportCSV').click(function(){
+
+console.log("In Funcction CSV");
+var exportedArray = exportArray();
+console.log("New Array");
+console.log(exportedArray);
+
+let csvContent = "data:text/csv;charset=utf-8," 
+    + exportedArray.map(e => e.join(",")).join("\n");
+
+    var encodedUri = encodeURI(csvContent);
+    var link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "my_data.csv");
+    document.body.appendChild(link); // Required for FF
+    
+    link.click(); 
+
+});
+
 function  dataURLtoFile(dataUrl, fileName, graphNumber){
      var arr = dataUrl.split(','), mime = arr[0].match(/:(.*?);/)[1],
          bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
@@ -844,6 +867,24 @@ function  dataURLtoFile(dataUrl, fileName, graphNumber){
      return;
 
  }
+
+ function exportArray()
+ {
+  var exporterArray = [];
+  exporterArray.push(headerDataArray);
+  // i delimits row, j delimits column
+  for(let i = 0; i < bodyDataArray[0].length; i++)
+  {
+    var row = [];
+    for(let j=0; j < bodyDataArray.length;j++)
+    {
+      row[j] = bodyDataArray[j][i];
+    }
+    exporterArray.push(row);
+  }
+  return exporterArray;
+ }
+
  /*------Formulas-------------------------------------------------------- */
 
   function calcAscentRate(altitudeOne,altitudeTwo,dateOne,dateTwo)
