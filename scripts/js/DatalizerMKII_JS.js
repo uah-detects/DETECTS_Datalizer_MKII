@@ -1,28 +1,49 @@
+/*------Science Question Graph Variables------------------------------------------------- */
+
+// This verification Header Insures that the data from the CSV file matches the values that have been preselected
+// to be graphed fo each science question. It is VITAL that the list of items in the verification header matches
+// the items listed in the scienceQuestionFileBody. If they do not match the program will not function properly.
+// Only change what is betweeen the "" and make sure the verification header has the respective starting % and closing %.
+var scienceQuestionVerificationHeader = "%time,lasttime,lat,lng,speed,course,altitude,Temperature (C),Pressure (Pa),Ascent Rate (M/Sec)%";
+
+// The scienceQuestionFileBody is the main point where the graph selections for each science objective is stored.
+// The science question is delimeted by a starting < and a closing > with the name of the science question in between.
+// Each group of graphs is seperated with a starting { and a closing } in between those curly brackets each xy graph
+// is delimited by a starting [ and a closing ] in between those square braces is the x data point, a comma, and the y data point.
+// it is very important to follow this form to make sure that the file is parsed correctly. You may notice that after som lines there is a \
+// this is to escape the newline character. This \ is important for the multiline string format only. It has no impact on the data within
+// the string itself. When editing the file make sure to follow the proper format and keep the closing ".
+var scienceQuestionFileBody = "<Temperature Change>{[altitude,Temperature (C)][Temperature (C),speed][Temperature (C),time]} \
+<Pressure Change>{[altitude,Pressure (Pa)][Pressure (Pa),time][Pressure (Pa),Temperature (C)]} \
+<Time of Day>{[altitude,Temperature (C)][altitude,Pressure (Pa)][altitude,time][Temperature (C),time][Pressure (Pa),time][speed,time]} \
+<Distance Traveled>{[altitude,time][altitude,speed][lat,time][lng,time][lat,lng]}\
+<Jet Stream>{[altitude,speed]}\
+<Clouds>{[altitude,time][Pressure (Pa),time]}\
+<Tropopause>{[altitude,Temperature (C)]}\
+<Pollutants>{[altitude,speed]}\
+<Ascent Rate>{[Ascent Rate (M/Sec),time][altitude,Ascent Rate (M/Sec)][Ascent Rate (M/Sec),Temperature (C)][Ascent Rate (M/Sec),Pressure (Pa)]}\
+<Wind Shear>{[altitude,speed][course,time][altitude,course]}";
+
 /*------Global Values------------------------------------------------- */
 var verificationHeaderArray = [];
 var scienceQuestionArray = [];
 var headerDataArray = [];
 var bodyDataArray = [];
 var calculationSwitchState = false;
+
 /*------Call On Page Load------------------------------------------------- */
 window.onload = function ()
 {
-  console.log("ON PAGE LOAD");
+  readConfFile();
 };
 
 /*------ Parse Config File------------------------------------------------- */
-//This function excecutes when the configuration file is chosen
-function readConfFile(e) {
-  var file = e.target.files[0];
-  if (!file) {
-    return;
-  }
-  var reader = new FileReader();
-  reader.onload = function(e) {
-    var fileContentArray = this.result.split(/\r\n|\n/);
+function readConfFile()
+{
+    var fileContentArray = scienceQuestionFileBody.split();
     console.log(fileContentArray);
 
-    var headerLine = grabVerHeader(fileContentArray);
+    var headerLine = grabVerHeader(scienceQuestionVerificationHeader);
 
     console.log(headerLine);
     if (headerLine == null)         //Testing to see if a verification header was returned by grabVerHeader
@@ -44,8 +65,7 @@ function readConfFile(e) {
     }
     scienceQuestionArray = body;           //setting the global science Question Array
     populateScienceQuestionDropdown();
-  };
-  reader.readAsText(file);
+    disableInterface();
 }
 
 //This function populates the Science question dropdown from the global science question array
@@ -67,7 +87,7 @@ function populateScienceQuestionDropdown()
 //function gets the verification header
 function grabVerHeader(fileContentArray)
 {
-  var headerLine = fileContentArray[0];
+  var headerLine = fileContentArray;
   console.log(headerLine);
   if(headerLine.startsWith("%") && headerLine.endsWith("%")){
     console.log(headerLine);
@@ -491,6 +511,9 @@ console.log(bodyArray);
     populateDropdowns(headerLine);
   };
   reader.readAsText(file);
+
+  enableInterface();
+
 }
 
 function splitHeader(fileContentArray)
@@ -850,88 +873,143 @@ let csvContent = "data:text/csv;charset=utf-8,"
 });
 
 function  dataURLtoFile(dataUrl, fileName, graphNumber){
-     var arr = dataUrl.split(','), mime = arr[0].match(/:(.*?);/)[1],
-         bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
-     while(n--){
+    var arr = dataUrl.split(','), mime = arr[0].match(/:(.*?);/)[1],
+        bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+    while(n--){
         u8arr[n] = bstr.charCodeAt(n);
-     }
-     var bb = new File([u8arr], fileName, {type:mime});
-     var a = document.createElement('a');
-     a.download = 'graph '+graphNumber+'.' + document.getElementById('imageFileType').value;
-     a.href = window.URL.createObjectURL(bb);
-     a.click();
-
-     return;
-
- }
-
- function exportArray()
- {
-  var exporterArray = [];
-  exporterArray.push(headerDataArray);
-  // i delimits row, j delimits column
-  for(let i = 0; i < bodyDataArray[0].length; i++)
-  {
-    var row = [];
-    for(let j=0; j < bodyDataArray.length;j++)
-    {
-      row[j] = bodyDataArray[j][i];
     }
-    exporterArray.push(row);
+    var bb = new File([u8arr], fileName, {type:mime});
+    var a = document.createElement('a');
+    a.download = 'graph '+graphNumber+'.' + document.getElementById('imageFileType').value;
+    a.href = window.URL.createObjectURL(bb);
+    a.click();
+
+    return;
+
+}
+
+function exportArray()
+{
+var exporterArray = [];
+exporterArray.push(headerDataArray);
+// i delimits row, j delimits column
+for(let i = 0; i < bodyDataArray[0].length; i++)
+{
+  var row = [];
+  for(let j=0; j < bodyDataArray.length;j++)
+  {
+    row[j] = bodyDataArray[j][i];
   }
-  return exporterArray;
- }
+  exporterArray.push(row);
+}
+return exporterArray;
+}
+
+function disableInterface()
+{
+  document.getElementById("plotButton").disabled = true;
+  //document.getElementById("plotButton").hidden=true;
+  document.getElementById("selectX").disabled = true;
+  document.getElementById("selectY").disabled = true;
+  document.getElementById("selectScienceQuestion").disabled = true;
+  document.getElementById("plotScienceQuestion").disabled = true;
+  document.getElementById("clearButton").disabled = true;
+  document.getElementById("imageFileType").disabled = true;
+  document.getElementById("btnExport").disabled = true;
+  document.getElementById("btnExportCSV").disabled = true;
+  hiddenInterface();
+}
+
+function hiddenInterface()
+{
+  document.getElementById("plotButton").hidden=true;
+  document.getElementById("selectX").hidden = true;
+  document.getElementById("selectY").hidden = true;
+  document.getElementById("selectScienceQuestion").hidden = true;
+  document.getElementById("plotScienceQuestion").hidden = true;
+  document.getElementById("clearButton").hidden = true;
+  document.getElementById("imageFileType").hidden = true;
+  document.getElementById("btnExport").hidden = true;
+  document.getElementById("btnExportCSV").hidden = true;
+}
+
+function enableInterface()
+{
+  document.getElementById("plotButton").disabled = false;
+  document.getElementById("selectX").disabled = false;
+  document.getElementById("selectY").disabled = false;
+  document.getElementById("selectScienceQuestion").disabled = false;
+  document.getElementById("plotScienceQuestion").disabled = false;
+  document.getElementById("clearButton").disabled = false;
+  document.getElementById("imageFileType").disabled = false;
+  document.getElementById("btnExport").disabled = false;
+  document.getElementById("btnExportCSV").disabled = false;
+  showInterface();
+}
+
+function showInterface()
+{
+  document.getElementById("plotButton").hidden = false;
+  document.getElementById("selectX").hidden = false;
+  document.getElementById("selectY").hidden = false;
+  document.getElementById("selectScienceQuestion").hidden = false;
+  document.getElementById("plotScienceQuestion").hidden = false;
+  document.getElementById("clearButton").hidden = false;
+  document.getElementById("imageFileType").hidden = false;
+  document.getElementById("btnExport").hidden = false;
+  document.getElementById("btnExportCSV").hidden = false;
+}
 
  /*------Formulas-------------------------------------------------------- */
 
-  function calcAscentRate(altitudeOne,altitudeTwo,dateOne,dateTwo)
-  {
-    var timeDifference = calcTimeDif(dateOne,dateTwo);
-    var altitudeDif = altitudeDifference(altitudeOne,altitudeTwo);
-    return (altitudeDif / (timeDifference))*1000;
-  }
+function calcAscentRate(altitudeOne,altitudeTwo,dateOne,dateTwo)
+{
+  var timeDifference = calcTimeDif(dateOne,dateTwo);
+  var altitudeDif = altitudeDifference(altitudeOne,altitudeTwo);
+  return (altitudeDif / (timeDifference))*1000;
+}
 
-  function calcTimeDif(dateOne,dateTwo)
-  {
-    var dateOneConvert = new Date(dateOne);
-    var dateTwoConvert = new Date(dateTwo);
-    var Difference_In_Time = dateTwoConvert.getTime() - dateOneConvert.getTime();
-    return Difference_In_Time;
-  }
+function calcTimeDif(dateOne,dateTwo)
+{
+  var dateOneConvert = new Date(dateOne);
+  var dateTwoConvert = new Date(dateTwo);
+  var Difference_In_Time = dateTwoConvert.getTime() - dateOneConvert.getTime();
+  return Difference_In_Time;
+}
 
-  function altitudeDifference(y1,y2)
-  {
-    var total = y2 - y1;
-    return total;
-  }
+function altitudeDifference(y1,y2)
+{
+  var total = y2 - y1;
+  return total;
+}
 
-  function calcDistanceTraveled(currentLat,prevLat,currentLon,prevLon)
-  {
-    var p = currentLat - prevLat;
-    var t = currentLon - prevLon;
-    var pSQ = Math.pow(p,2);
-    var tSQ = Math.pow(t,2);
-    var d = Math.sqrt(pSQ+tSQ);
-    dMeters = d * 111111;
-    return dMeters
-  }
+function calcDistanceTraveled(currentLat,prevLat,currentLon,prevLon)
+{
+  var p = currentLat - prevLat;
+  var t = currentLon - prevLon;
+  var pSQ = Math.pow(p,2);
+  var tSQ = Math.pow(t,2);
+  var d = Math.sqrt(pSQ+tSQ);
+  dMeters = d * 111111;
+  return dMeters
+}
 
-  function calcAbsoluteValueCourse(prevCourse,currentCourse)
+function calcAbsoluteValueCourse(prevCourse,currentCourse)
+{
+  var courseDif = currentCourse - prevCourse;
+  if(courseDif > 180)
   {
-    var courseDif = currentCourse - prevCourse;
-    if(courseDif > 180)
-    {
-      courseDif = 360 - courseDif;
-    }
-    courseDif = Math.abs(courseDif);
-    return courseDif;
+    courseDif = 360 - courseDif;
   }
+  courseDif = Math.abs(courseDif);
+  return courseDif;
+}
 
 /////////// Event Listeners ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 document.getElementById('file-input').addEventListener('change', readDataFile, false);  // Listener for the Data File input
 
-document.getElementById('CONFIG_FILE').addEventListener('change', readConfFile, false);  // Listener for the Data File input
+//document.getElementById('CONFIG_FILE').addEventListener('change', readConfFile, false);  // Listener for the Data File input
 
 document.getElementById('mySwitch').addEventListener('change', function(){
 if(calculationSwitchState == false)

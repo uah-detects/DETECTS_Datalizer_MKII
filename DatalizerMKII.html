@@ -28,16 +28,15 @@
 
     <div class="menuContainer  p-5 my-5 ">
 
-    <label for="CONFIG_FILE">Select a Configuration File:</label>
-    <br>
-    <input type="file" id="CONFIG_FILE" />
-    <pre id="CONFfile-content"></pre>
-
     <label for="file-input">Select a CSV File:</label>
     <br>
     <input type="file" id="file-input" />
     <pre id="file-content"></pre>
-
+    <div class="form-check form-switch">
+      <input class="form-check-input" type="checkbox" id="mySwitch" name="darkmode" value="no" unchecked>
+      <label class="form-check-label" for="mySwitch">Calculate Ascent Rate, Distance Travelled, and Course in Radians</label>
+    </div>
+    <br>
     <select id="selectX">
       <option>Choose an X</option>
     </select>
@@ -45,22 +44,16 @@
     <select id="selectY">
       <option>Choose a Y</option>
     </select>
-    <input type = "button" onclick = "plotGraph()" value = "Plot">
-
-    <div class="form-check form-switch">
-      <input class="form-check-input" type="checkbox" id="mySwitch" name="darkmode" value="no" unchecked>
-      <label class="form-check-label" for="mySwitch">Calculate Ascent Rate</label>
-    </div>
-
+    <input type = "button" id=plotButton onclick = "plotGraph()" value = "Plot">
     <br>
     <br>
     <select id="selectScienceQuestion">
       <option>Choose a Science Question</option>
     </select>
-    <input type = "button" onclick = "plotScienceQuestion()" value = "Plot Science Question"> 
+    <input type = "button" id = plotScienceQuestion onclick = "plotScienceQuestion()" value = "Plot Science Question"> 
     <br>
     <br>
-    <input type = "button" onclick = "clearGraphs()" value = "Clear">
+    <input type = "button" id = clearButton onclick = "clearGraphs()" value = "Clear">
 
     <select id="imageFileType">
       <option selected="selected">png</option>
