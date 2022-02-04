@@ -4,7 +4,7 @@
 // to be graphed fo each science question. It is VITAL that the list of items in the verification header matches
 // the items listed in the scienceQuestionFileBody. If they do not match the program will not function properly.
 // Only change what is betweeen the "" and make sure the verification header has the respective starting % and closing %.
-var scienceQuestionVerificationHeader = "%time,lasttime,lat,lng,speed,course,altitude,Temperature (C),Pressure (Pa),Ascent Rate (M/Sec)%";
+var scienceQuestionVerificationHeader = "%time,lasttime,lat,lng,speed,course,altitude,Temperature (C),Pressure (Pa),Ascent Rate (M/Sec),Distance Traveled (M),Absolute Value Course%";
 
 // The scienceQuestionFileBody is the main point where the graph selections for each science objective is stored.
 // The science question is delimeted by a starting < and a closing > with the name of the science question in between.
@@ -413,6 +413,7 @@ function verifyHeaderItem(item)
 /*------ Plot Graph-------------------------------------------------------- */
 
 function readDataFile(e) {
+  disableInterface();
   var file = e.target.files[0];
   if (!file) {
     return;
@@ -509,10 +510,40 @@ console.log(bodyArray);
     bodyDataArray = bodyArray;
 
     populateDropdowns(headerLine);
+    enableInterface();
+    if (verificationHeaderCheck(headerLine) == false)
+    {
+      document.getElementById("selectScienceQuestion").disabled = true;
+      document.getElementById("plotScienceQuestion").disabled = true;
+      document.getElementById("selectScienceQuestion").hidden = true;
+      document.getElementById("plotScienceQuestion").hidden = true;
+
+      //throwing sudo error
+      document.getElementById("headerErrorNotice").disabled=false;
+      document.getElementById("headerErrorNotice").hidden = false;
+    }
   };
   reader.readAsText(file);
+}
 
-  enableInterface();
+function verificationHeaderCheck(headerLine)
+{
+  var headerLineArray = [];
+  headerLineArray = headerLine;
+  console.log( headerLineArray);
+  console.log(verificationHeaderArray);
+  if(headerLine.length == verificationHeaderArray.length)
+  {
+    for(let i = 0; i <verificationHeaderArray.length; i++)
+    {
+      if(verificationHeaderArray[i] != headerLine[i])
+      {
+        return false;
+      }
+    }
+    return true;
+  }
+  return false;
 
 }
 
@@ -907,8 +938,8 @@ return exporterArray;
 
 function disableInterface()
 {
+  document.getElementById("headerErrorNotice").disabled=true;
   document.getElementById("plotButton").disabled = true;
-  //document.getElementById("plotButton").hidden=true;
   document.getElementById("selectX").disabled = true;
   document.getElementById("selectY").disabled = true;
   document.getElementById("selectScienceQuestion").disabled = true;
@@ -922,6 +953,7 @@ function disableInterface()
 
 function hiddenInterface()
 {
+  document.getElementById("headerErrorNotice").hidden=true;
   document.getElementById("plotButton").hidden=true;
   document.getElementById("selectX").hidden = true;
   document.getElementById("selectY").hidden = true;
@@ -1008,8 +1040,6 @@ function calcAbsoluteValueCourse(prevCourse,currentCourse)
 /////////// Event Listeners ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 document.getElementById('file-input').addEventListener('change', readDataFile, false);  // Listener for the Data File input
-
-//document.getElementById('CONFIG_FILE').addEventListener('change', readConfFile, false);  // Listener for the Data File input
 
 document.getElementById('mySwitch').addEventListener('change', function(){
 if(calculationSwitchState == false)

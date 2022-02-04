@@ -23,7 +23,12 @@
       </a>
     </div>
   </nav>
-  
+
+  <div id = headerErrorNotice disabled hidden class="alert alert-warning alert-dismissible fade show" role="alert">
+    <strong>Error: Header Does Not Match.</strong> Check the format given in the notebook. The header must match the given format to enable the Science Question Selection feature.
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+
   <div class="text-white">
 
     <div class="menuContainer  p-5 my-5 ">
@@ -37,31 +42,31 @@
       <label class="form-check-label" for="mySwitch"> Activate to Calculate Ascent Rate, Distance Travelled, and Course in Radians</label>
     </div>
     <br>
-    <select id="selectX">
+    <select id="selectX" disabled hidden>
       <option>Choose an X</option>
     </select>
 
-    <select id="selectY">
+    <select id="selectY" disabled hidden>
       <option>Choose a Y</option>
     </select>
-    <input type = "button" id=plotButton onclick = "plotGraph()" value = "Plot">
+    <input type = "button" id=plotButton onclick = "plotGraph()" value = "Plot" disabled hidden>
     <br>
     <br>
-    <select id="selectScienceQuestion">
+    <select id="selectScienceQuestion" disabled hidden>
       <option>Choose a Science Question</option>
     </select>
-    <input type = "button" id = plotScienceQuestion onclick = "plotScienceQuestion()" value = "Plot Science Question"> 
+    <input type = "button" id = plotScienceQuestion onclick = "plotScienceQuestion()" value = "Plot Science Question" disabled hidden> 
     <br>
     <br>
-    <input type = "button" id = clearButton onclick = "clearGraphs()" value = "Clear">
+    <input type = "button" id = clearButton onclick = "clearGraphs()" value = "Clear" disabled hidden>
 
-    <select id="imageFileType">
+    <select id="imageFileType" disabled hidden>
       <option selected="selected">png</option>
       <option>jpeg</option>
     </select>
 
-      <button id="btnExport" type="button" text="Export" > Export to Images </button>
-      <button id="btnExportCSV" type="button" text="Export" > Export CSV </button>
+      <button id="btnExport" type="button" text="Export" disabled hidden > Export to Images </button>
+      <button id="btnExportCSV" type="button" text="Export" disabled hidden > Export CSV </button>
     </div>
   </div>
 
