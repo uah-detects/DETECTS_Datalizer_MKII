@@ -748,12 +748,40 @@ function plotScienceQuestion()
       }
       else
       {
+        var max = findMaxAlt();
         sqPlot(xIndex,yIndex);
       }
 
     }
   }
 
+}
+
+function findMaxAlt()
+{
+  var maxAlt = 0;
+  var Index = 0;
+  console.log(bodyDataArray[6].length);
+  console.log(bodyDataArray[6]);
+  for(let i = 0; i <= bodyDataArray[6].length; i++)
+  {
+    if(bodyDataArray[6][i] >= maxAlt)
+    {
+      maxAlt = bodyDataArray[6][i];
+      Index = i;
+      console.log(maxAlt);
+    }
+    if(bodyDataArray[6][i] <= maxAlt)
+    {
+      maxAlt = bodyDataArray[6][i];
+      Index = i;
+      console.log("NOOOOO" + maxAlt);
+    }
+    console.log(i);
+  }
+  console.log(maxAlt);
+  console.log(Index);
+  return maxAlt;
 }
 
 //this function is used to plot the x, y data it accepts as parameters. It is built with the ability to plot more than one singular graph
