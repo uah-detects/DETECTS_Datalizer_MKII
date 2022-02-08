@@ -4,9 +4,9 @@
 // to be graphed fo each science question. It is VITAL that the list of items in the verification header matches
 // the items listed in the scienceQuestionFileBody. If they do not match the program will not function properly.
 // Only change what is betweeen the "" and make sure the verification header has the respective starting % and closing %.
-var scienceQuestionVerificationHeader = "%time,lasttime,lat,lng,speed,course,altitude,Temperature (C),Pressure (Pa),Ascent Rate (M/Sec),Distance Traveled (M),Absolute Course Difference (degrees)%";
+var scienceQuestionVerificationHeader = "%time,lasttime,lat,lng,speed,course,altitude,Temperature (Celsius),Pressure (Pa),Ascent Rate (m/s),Distance Traveled (m),Absolute Course Difference (degrees)%";
 
-var prettyHeader= ["Time (24-hr UTC)","Last Time (24-hr UTC)","Lat","Lng","Speed (km/hr)","Course (degrees)","Altitude (m)","Temperature (Celcius)","Pressure (Pa)","Ascent Rate (m/s)","Distance Traveled (m)","Absolute Course Difference (degrees)"];
+var prettyHeader= ["Time (24-hr UTC)","Last Time (24-hr UTC)","Lat","Lng","Speed (km/hr)","Course (degrees)","Altitude (m)","Temperature (Celsius)","Pressure (Pa)","Ascent Rate (m/s)","Distance Traveled (m)","Absolute Course Difference (degrees)"];
 // The scienceQuestionFileBody is the main point where the graph selections for each science objective is stored.
 // The science question is delimeted by a starting < and a closing > with the name of the science question in between.
 // Each group of graphs is seperated with a starting { and a closing } in between those curly brackets each xy graph
@@ -14,15 +14,15 @@ var prettyHeader= ["Time (24-hr UTC)","Last Time (24-hr UTC)","Lat","Lng","Speed
 // it is very important to follow this form to make sure that the file is parsed correctly. You may notice that after som lines there is a \
 // this is to escape the newline character. This \ is important for the multiline string format only. It has no impact on the data within
 // the string itself. When editing the file make sure to follow the proper format and keep the closing ".
-var scienceQuestionFileBody = "<Temperature Change>{[altitude,Temperature (C)][Temperature (C),speed][Temperature (C),time]} \
-<Pressure Change>{[altitude,Pressure (Pa)][Pressure (Pa),time][Pressure (Pa),Temperature (C)]} \
-<Time of Day>{[altitude,Temperature (C)][altitude,Pressure (Pa)][altitude,time][Temperature (C),time][Pressure (Pa),time][speed,time]} \
+var scienceQuestionFileBody = "<Temperature Change>{[altitude,Temperature (Celsius)][Temperature (Celsius),speed][Temperature (Celsius),time]} \
+<Pressure Change>{[altitude,Pressure (Pa)][Pressure (Pa),time][Pressure (Pa),Temperature (Celsius)]} \
+<Time of Day>{[altitude,Temperature (Celsius)][altitude,Pressure (Pa)][altitude,time][Temperature (Celsius),time][Pressure (Pa),time][speed,time]} \
 <Distance Traveled>{[altitude,time][altitude,speed][lat,time][lng,time][lat,lng]}\
 <Jet Stream>{[altitude,speed]}\
 <Clouds>{[altitude,time][Pressure (Pa),time]}\
-<Tropopause>{[altitude,Temperature (C)]}\
+<Tropopause>{[altitude,Temperature (Celsius)]}\
 <Pollutants>{[altitude,speed]}\
-<Ascent Rate>{[Ascent Rate (M/Sec),time][altitude,Ascent Rate (M/Sec)][Ascent Rate (M/Sec),Temperature (C)][Ascent Rate (M/Sec),Pressure (Pa)]}\
+<Ascent Rate>{[Ascent Rate (m/s),time][altitude,Ascent Rate (m/s)][Ascent Rate (m/s),Temperature (Celsius)][Ascent Rate (m/s),Pressure (Pa)]}\
 <Wind Shear>{[altitude,speed][course,time][altitude,course]}";
 
 /*------Global Values------------------------------------------------- */
@@ -443,7 +443,7 @@ function readDataFile(e) {
 
 
     headerLine.push("Ascent Rate (m/s)");
-    headerLine.push("Distance Travelled (m)");
+    headerLine.push("Distance Traveled (m)");
     headerLine.push("Absolute Course Difference (degrees)");
 
    for(let j = 0; j < bodyArray[0].length; j++)            //First loop is looping through the file line by line
@@ -623,7 +623,7 @@ function populateDropdowns(headerArray)
 function verifyCSVHeader(stringToVer)
 {
   //This is the string that is a the top of the RAW CSV file
-  var verificationString = "time,lasttime,lat,lng,speed,course,altitude,Temperature (C),Pressure (Pa)";
+  var verificationString = "time,lasttime,lat,lng,speed,course,altitude,Temperature (Celsius),Pressure (Pa)";
 
   if (verificationString == stringToVer)
   {
@@ -842,7 +842,7 @@ function plot(xIndex,yIndex)
     
 }
 
-//this function is used to plot the x, y data it accepts as parameters. It is built with the ability to plot more than one singular graph
+//this function is used to plot the x, y Science Question data it accepts as parameters. It is built with the ability to plot more than one singular graph
 function sqPlot(xIndex,yIndex)
 {
   var titleTEXT = prettyHeader[xIndex]+" vs "+ prettyHeader[yIndex];
@@ -1116,11 +1116,12 @@ function calcDistanceTraveled(currentLat,prevLat,currentLon,prevLon)
 function calcAbsoluteValueCourse(prevCourse,currentCourse)
 {
   var courseDif = currentCourse - prevCourse;
+  courseDif = Math.abs(courseDif);
   if(courseDif > 180)
   {
     courseDif = 360 - courseDif;
   }
-  courseDif = Math.abs(courseDif);
+
   return courseDif;
 }
 

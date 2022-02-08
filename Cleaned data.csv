@@ -1,4 +1,4 @@
-time,lasttime,lat,lng,speed,course,altitude,Temperature (C),Pressure (Pa)
+time,lasttime,lat,lng,speed,course,altitude,Temperature (Celsius),Pressure (Pa)
 1/18/2022 18:35,1/18/2022 18:35,34.72267,-86.64383,4,34,680.01,14,94129
 1/18/2022 18:36,1/18/2022 18:36,34.72467,-86.64333,11,27,778.76,13,93081
 1/18/2022 18:37,1/18/2022 18:37,34.727,-86.64317,11,356,852.83,12,92178
