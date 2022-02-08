@@ -6,7 +6,7 @@
 // Only change what is betweeen the "" and make sure the verification header has the respective starting % and closing %.
 var scienceQuestionVerificationHeader = "%time,lasttime,lat,lng,speed,course,altitude,Temperature (C),Pressure (Pa),Ascent Rate (M/Sec),Distance Traveled (M),Absolute Value Course%";
 
-var prettyHeader= ["Time (24-hr UTC)","Last Time (24-hr UTC)","Lat","Lng","Speed (km/hr)","Course (degrees)","Altitude (m)","Temperature (Celcius )","Pressure (Pa)","Ascent Rate (m/s)","Distance Travelled (m)","Absolute Value of Change in Course (degrees)"];
+var prettyHeader= ["Time (24-hr UTC)","Last Time (24-hr UTC)","Lat","Lng","Speed (km/hr)","Course (degrees)","Altitude (m)","Temperature (Celcius )","Pressure (Pa)","Ascent Rate (m/s)","Distance Traveled (m)","Absolute Course Difference (degrees)"];
 // The scienceQuestionFileBody is the main point where the graph selections for each science objective is stored.
 // The science question is delimeted by a starting < and a closing > with the name of the science question in between.
 // Each group of graphs is seperated with a starting { and a closing } in between those curly brackets each xy graph
@@ -30,7 +30,7 @@ var verificationHeaderArray = [];
 var scienceQuestionArray = [];
 var headerDataArray = [];
 var bodyDataArray = [];
-var calculationSwitchState = false;
+var calculationSwitchState = true;
 
 /*------Call On Page Load------------------------------------------------- */
 window.onload = function ()
