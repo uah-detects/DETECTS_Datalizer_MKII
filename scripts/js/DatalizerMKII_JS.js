@@ -4,9 +4,9 @@
 // to be graphed fo each science question. It is VITAL that the list of items in the verification header matches
 // the items listed in the scienceQuestionFileBody. If they do not match the program will not function properly.
 // Only change what is betweeen the "" and make sure the verification header has the respective starting % and closing %.
-var scienceQuestionVerificationHeader = "%time,lasttime,lat,lng,speed,course,altitude,Temperature (C),Pressure (Pa),Ascent Rate (M/Sec),Distance Traveled (M),Absolute Value Course%";
+var scienceQuestionVerificationHeader = "%time,lasttime,lat,lng,speed,course,altitude,Temperature (C),Pressure (Pa),Ascent Rate (M/Sec),Distance Traveled (M),Absolute Course Difference (degrees)%";
 
-var prettyHeader= ["Time (24-hr UTC)","Last Time (24-hr UTC)","Lat","Lng","Speed (km/hr)","Course (degrees)","Altitude (m)","Temperature (Celcius )","Pressure (Pa)","Ascent Rate (m/s)","Distance Traveled (m)","Absolute Course Difference (degrees)"];
+var prettyHeader= ["Time (24-hr UTC)","Last Time (24-hr UTC)","Lat","Lng","Speed (km/hr)","Course (degrees)","Altitude (m)","Temperature (Celcius)","Pressure (Pa)","Ascent Rate (m/s)","Distance Traveled (m)","Absolute Course Difference (degrees)"];
 // The scienceQuestionFileBody is the main point where the graph selections for each science objective is stored.
 // The science question is delimeted by a starting < and a closing > with the name of the science question in between.
 // Each group of graphs is seperated with a starting { and a closing } in between those curly brackets each xy graph
@@ -442,9 +442,9 @@ function readDataFile(e) {
     console.log(bodyArray);
 
 
-    headerLine.push("Ascent Rate (M/Sec)");
-    headerLine.push("Distance Traveled (M)");
-    headerLine.push("Absolute Value Course");
+    headerLine.push("Ascent Rate (m/s)");
+    headerLine.push("Distance Travelled (m)");
+    headerLine.push("Absolute Course Difference (degrees)");
 
    for(let j = 0; j < bodyArray[0].length; j++)            //First loop is looping through the file line by line
    {
