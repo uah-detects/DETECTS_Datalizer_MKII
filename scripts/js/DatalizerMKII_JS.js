@@ -759,28 +759,32 @@ function plotScienceQuestion()
 
 function findMaxAlt()
 {
-  var maxAlt = 0;
+  var maxAlt = -999999.99;
   var Index = 0;
   console.log(bodyDataArray[6].length);
   console.log(bodyDataArray[6]);
-  for(let i = 0; i <= bodyDataArray[6].length; i++)
-  {
-    if(bodyDataArray[6][i] >= maxAlt)
+  for(let i = 0; i < bodyDataArray[6].length; i++) {
+    console.log("New Value:--" + bodyDataArray[6][i] + "-- old value: " + maxAlt + " test: " + (bodyDataArray[6][i] >= maxAlt) + " isNaN: " + isNaN(bodyDataArray[6][i]));
+    if((bodyDataArray[6][i] - maxAlt) > 0.0)
     {
+      console.log("New Max:" + bodyDataArray[6][i] + " old max: " + maxAlt);
       maxAlt = bodyDataArray[6][i];
       Index = i;
       console.log(maxAlt);
     }
     if(bodyDataArray[6][i] <= maxAlt)
     {
-      maxAlt = bodyDataArray[6][i];
-      Index = i;
-      console.log("NOOOOO" + maxAlt);
+      //maxAlt = bodyDataArray[6][i];
+      //Index = i;
+      console.log("NOOOOO " + maxAlt);
     }
     console.log(i);
   }
   console.log(maxAlt);
   console.log(Index);
+  val1 = 9984.33;
+  val2 = 12341.12;
+  console.log("TESTER: " +(val1 < val2) );
   return maxAlt;
 }
 
