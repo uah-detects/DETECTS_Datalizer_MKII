@@ -1,23 +1,53 @@
-/*------ Parse Config File------------------------------------------------- */
+/*------Science Question Graph Variables------------------------------------------------- */
 
+// This verification Header Insures that the data from the CSV file matches the values that have been preselected
+// to be graphed fo each science question. It is VITAL that the list of items in the verification header matches
+// the items listed in the scienceQuestionFileBody. If they do not match the program will not function properly.
+// Only change what is betweeen the "" and make sure the verification header has the respective starting % and closing %.
+var scienceQuestionVerificationHeader = "%time,lasttime,lat,lng,speed,course,altitude,Temperature (C),Pressure (Pa),Ascent Rate (M/Sec),Distance Traveled (M),Absolute Course Difference (degrees)%";
+
+var prettyHeader= ["Time (24-hr UTC)","Last Time (24-hr UTC)","Lat","Lng","Speed (km/hr)","Course (degrees)","Altitude (m)","Temperature (Celcius)","Pressure (Pa)","Ascent Rate (m/s)","Distance Traveled (m)","Absolute Course Difference (degrees)"];
+// The scienceQuestionFileBody is the main point where the graph selections for each science objective is stored.
+// The science question is delimeted by a starting < and a closing > with the name of the science question in between.
+// Each group of graphs is seperated with a starting { and a closing } in between those curly brackets each xy graph
+// is delimited by a starting [ and a closing ] in between those square braces is the x data point, a comma, and the y data point.
+// it is very important to follow this form to make sure that the file is parsed correctly. You may notice that after som lines there is a \
+// this is to escape the newline character. This \ is important for the multiline string format only. It has no impact on the data within
+// the string itself. When editing the file make sure to follow the proper format and keep the closing ".
+var scienceQuestionFileBody = "<Temperature Change>{[altitude,Temperature (C)][Temperature (C),speed][Temperature (C),time]} \
+<Pressure Change>{[altitude,Pressure (Pa)][Pressure (Pa),time][Pressure (Pa),Temperature (C)]} \
+<Time of Day>{[altitude,Temperature (C)][altitude,Pressure (Pa)][altitude,time][Temperature (C),time][Pressure (Pa),time][speed,time]} \
+<Distance Traveled>{[altitude,time][altitude,speed][lat,time][lng,time][lat,lng]}\
+<Jet Stream>{[altitude,speed]}\
+<Clouds>{[altitude,time][Pressure (Pa),time]}\
+<Tropopause>{[altitude,Temperature (C)]}\
+<Pollutants>{[altitude,speed]}\
+<Ascent Rate>{[Ascent Rate (M/Sec),time][altitude,Ascent Rate (M/Sec)][Ascent Rate (M/Sec),Temperature (C)][Ascent Rate (M/Sec),Pressure (Pa)]}\
+<Wind Shear>{[altitude,speed][course,time][altitude,course]}";
+
+/*------Global Values------------------------------------------------- */
 var verificationHeaderArray = [];
 var scienceQuestionArray = [];
+var headerDataArray = [];
+var bodyDataArray = [];
+var calculationSwitchState = true;
 
-//This function excecutes when the configuration file is chosen
-function readConfFile(e) {
-  var file = e.target.files[0];
-  if (!file) {
-    return;
-  }
-  var reader = new FileReader();
-  reader.onload = function(e) {
-    var fileContentArray = this.result.split(/\r\n|\n/);
+/*------Call On Page Load------------------------------------------------- */
+window.onload = function ()
+{
+  readConfFile();
+};
+
+/*------ Parse Config File------------------------------------------------- */
+function readConfFile()
+{
+    var fileContentArray = scienceQuestionFileBody.split();
     console.log(fileContentArray);
 
-    var headerLine = grabVerHeader(fileContentArray);
+    var headerLine = grabVerHeader(scienceQuestionVerificationHeader);
 
     console.log(headerLine);
-    if (headerLine == null)         //Testing to see if a verification header was returneed by grabVerHeader
+    if (headerLine == null)         //Testing to see if a verification header was returned by grabVerHeader
     {
       return { 
         error: true,
@@ -36,8 +66,7 @@ function readConfFile(e) {
     }
     scienceQuestionArray = body;           //setting the global science Question Array
     populateScienceQuestionDropdown();
-  };
-  reader.readAsText(file);
+    disableInterface();
 }
 
 //This function populates the Science question dropdown from the global science question array
@@ -59,7 +88,7 @@ function populateScienceQuestionDropdown()
 //function gets the verification header
 function grabVerHeader(fileContentArray)
 {
-  var headerLine = fileContentArray[0];
+  var headerLine = fileContentArray;
   console.log(headerLine);
   if(headerLine.startsWith("%") && headerLine.endsWith("%")){
     console.log(headerLine);
@@ -378,15 +407,14 @@ function verifyHeaderItem(item)
       return true;
     }
   }
-  console.log("ERROR");
+  console.log("ERROR: Selected Item not in verification Header.");
   return false;
 }
 
 /*------ Plot Graph-------------------------------------------------------- */
-var headerDataArray = [];
-var bodyDataArray = [];
 
 function readDataFile(e) {
+  disableInterface();
   var file = e.target.files[0];
   if (!file) {
     return;
@@ -394,6 +422,16 @@ function readDataFile(e) {
   var reader = new FileReader();
   reader.onload = function(e) {
     var fileContentArray = this.result.split(/\r\n|\n/);
+
+
+  if (calculationSwitchState == true)
+  {
+    if( false == verifyCSVHeader(fileContentArray[0]))
+    {
+      console.log("Error: CSV Header Not Valid");
+      window.alert("Error: CSV Header Not Valid");
+      return;
+    }
     var headerLine = splitHeader(fileContentArray);
     console.log("in read --> " + headerLine);
     var headerSize = headerLine.length;
@@ -403,13 +441,111 @@ function readDataFile(e) {
     var bodyArray = splitBody(headerSize, fileContentArray);
     console.log(bodyArray);
 
+
+    headerLine.push("Ascent Rate (m/s)");
+    headerLine.push("Distance Travelled (m)");
+    headerLine.push("Absolute Course Difference (degrees)");
+
+   for(let j = 0; j < bodyArray[0].length; j++)            //First loop is looping through the file line by line
+   {
+     if(j == 0)
+     {
+       //inserting 3 arrays to hold all calculated data
+       for(let i = 0; i<= 2; i++)
+       {
+         bodyArray.push([]);
+       }
+
+       bodyArray[9][0] = 0; //adding the zero to the ascent rate column
+       bodyArray[10][0] = 0; //adding the zero to the Distance Travelled column
+       bodyArray[11][0] = 0; //adding the zero to the Absolute Value Course
+     }
+     if(j >= 1)
+     {
+       /*time,lasttime,lat,lng,speed,course,altitude,Temperature (C),Pressure (Pa),Ascent Rate (M/Sec),Distance Traveled (M),Absolute Value Course*/
+       /* 0       1     2   3     4     5       6         7              8                 9                  10                        11*/
+       
+      //Calculate Ascent Rate
+      var altitudeOne = bodyArray[6][j-1];
+      var altitudeTwo = bodyArray[6][j];
+      var dateOne = bodyArray[0][j-1];
+      var dateTwo = bodyArray[0][j];
+      var ascentRate = calcAscentRate(altitudeOne,altitudeTwo,dateOne,dateTwo);
+      bodyArray[9][j] = ascentRate;        //Adding the ascentRate to the bodyArray
+
+      //Calculate Distance Travelled
+      var prevLat = bodyArray[2][j-1];
+      var currentLat = bodyArray[2][j];
+      var prevLon = bodyArray[3][j-1];
+      var currentLon = bodyArray[3][j];
+      bodyArray[10][j] = calcDistanceTraveled(currentLat,prevLat,currentLon,prevLon);
+
+      // COURSE
+      var prevCourse = bodyArray[5][j-1];
+      var currentCourse = bodyArray[5][j];
+      bodyArray[11][j] = calcAbsoluteValueCourse(prevCourse,currentCourse);
+     }
+   }
+console.log(bodyArray);
+   
+
+  }
+  else
+  {
+    var headerLine = splitHeader(fileContentArray);
+    console.log("in read --> " + headerLine);
+    var headerSize = headerLine.length;
+    console.log(headerSize);
+
+    //parsing the body of the data
+    var bodyArray = splitBody(headerSize, fileContentArray);
+    console.log(bodyArray);
+
+    
+    //console.log(headerLine);
+  }
+
+    console.log(bodyArray);
     //Setting global arrays
     headerDataArray = headerLine;
     bodyDataArray = bodyArray;
 
     populateDropdowns(headerLine);
+    enableInterface();
+    if (verificationHeaderCheck(headerLine) == false)
+    {
+      document.getElementById("selectScienceQuestion").disabled = true;
+      document.getElementById("plotScienceQuestion").disabled = true;
+      document.getElementById("selectScienceQuestion").hidden = true;
+      document.getElementById("plotScienceQuestion").hidden = true;
+
+      //throwing sudo error
+      document.getElementById("headerErrorNotice").disabled=false;
+      document.getElementById("headerErrorNotice").hidden = false;
+    }
   };
   reader.readAsText(file);
+}
+
+function verificationHeaderCheck(headerLine)
+{
+  var headerLineArray = [];
+  headerLineArray = headerLine;
+  console.log( headerLineArray);
+  console.log(verificationHeaderArray);
+  if(headerLine.length == verificationHeaderArray.length)
+  {
+    for(let i = 0; i <verificationHeaderArray.length; i++)
+    {
+      if(verificationHeaderArray[i] != headerLine[i])
+      {
+        return false;
+      }
+    }
+    return true;
+  }
+  return false;
+
 }
 
 function splitHeader(fileContentArray)
@@ -430,7 +566,7 @@ function splitBody(headerSize,fileContentArray)
   }
   console.log(dataArray);
   
-  for(let j = 1; j < fileContentArray.length - 1; j++)            //First loop is looping through the file line by line
+  for(let j = 1; j < fileContentArray.length - 1; j++)            //First loop is looping through the file line by line Note: loop starts at one to leave off the header title that is stored in position 0 of the subarray
   {
     var parseLine = fileContentArray[j].split(',');
 
@@ -444,10 +580,28 @@ function splitBody(headerSize,fileContentArray)
   return dataArray;
 }
 
+function removeOptions(selectElement) {
+  var i, L = selectElement.options.length - 1;
+  for(i = L; i >= 0; i--) {
+     selectElement.remove(i);
+  }
+}
+
 function populateDropdowns(headerArray)
 {
   var selectX = document.getElementById("selectX");
   var selectY = document.getElementById("selectY");
+
+  removeOptions(document.getElementById('selectX'));
+  removeOptions(document.getElementById('selectY'));
+
+  var elX = document.createElement("option");
+  elX.textContent = "Choose an X";
+  selectX.appendChild(elX);
+
+  var elY = document.createElement("option");
+  elY.textContent = "Choose a Y";
+  selectY.appendChild(elY);
 
   for(var i = 0; i < headerArray.length; i++) {
     var opt = headerArray[i];
@@ -464,6 +618,21 @@ function populateDropdowns(headerArray)
     selectY.appendChild(el);
   }
 
+}
+
+function verifyCSVHeader(stringToVer)
+{
+  //This is the string that is a the top of the RAW CSV file
+  var verificationString = "time,lasttime,lat,lng,speed,course,altitude,Temperature (C),Pressure (Pa)";
+
+  if (verificationString == stringToVer)
+  {
+    return true;
+  }
+  else
+  {
+    return false;
+  }
 }
 
 //This function is called by the Plot button and is designed to allow the user to manually input a comparison to graph
@@ -579,7 +748,7 @@ function plotScienceQuestion()
       }
       else
       {
-        plot(xIndex,yIndex);
+        sqPlot(xIndex,yIndex);
       }
 
     }
@@ -651,7 +820,93 @@ function plot(xIndex,yIndex)
    $(".element:last").after("<div class='element' id='div_"+ nextindex +"'></div>");
  
    // Adding element to <div>
-   $("#div_" + nextindex).append("<button id='remove_" + nextindex + "' class='remove'>X</button>"+"<div id='txt_"+ nextindex +"' style='width:1200px;height:500px;'></div>");
+   $("#div_" + nextindex).append("<div class='pt-4'><button id='remove_" + nextindex + "' class='remove'>X</button>"+"<div class=' pt-1 w-75 'id='txt_"+ nextindex +"' style='height:500px;'></div> </div>");
+ 
+  }
+
+   // Remove element
+ $('.container').on('click','.remove',function(){
+ 
+  var id = this.id;
+  var split_id = id.split("_");
+  var deleteindex = split_id[1];
+
+  // Remove <div> with id
+  $("#div_" + deleteindex).remove();
+
+ }); 
+
+
+  Plotly.newPlot("txt_"+ nextindex +"", data,layout);
+///////////////////////////////////////////////////////////////////////////////////////////// Multi Functionality End //////////////////////////////////////////////////
+    
+}
+
+//this function is used to plot the x, y data it accepts as parameters. It is built with the ability to plot more than one singular graph
+function sqPlot(xIndex,yIndex)
+{
+  var titleTEXT = prettyHeader[xIndex]+" vs "+ prettyHeader[yIndex];
+    var trace1 =
+    {
+        x: bodyDataArray[xIndex],
+        y: bodyDataArray[yIndex],
+        type: 'scatter'
+
+    };
+
+    var layout = {
+      title: {
+        text: titleTEXT,
+        font: {
+          family: 'Courier New, monospace',
+          size: 24
+        },
+        xref: 'paper',
+        x: 0.05,
+      },
+      xaxis: {
+        title: {
+          text: prettyHeader[xIndex],
+          font: {
+            family: 'Courier New, monospace',
+            size: 18,
+            color: '#7f7f7f'
+          }
+        },
+      },
+      yaxis: {
+        title: {
+          text: prettyHeader[yIndex],
+          font: {
+            family: 'Courier New, monospace',
+            size: 18,
+            color: '#7f7f7f'
+          }
+        }
+      }
+    };
+
+    console.log('Called');
+    var data = [trace1];
+
+///////////////////////////////////////////////////////////////////////////////////////////// Multi Functionality Start ///////////////////////////////////////////////
+  // Finding total number of elements added
+  var total_element = $(".element").length;
+ 
+  // last <div> with element class id
+  var lastid = $(".element:last").attr("id");
+  var split_id = lastid.split("_");
+  var nextindex = Number(split_id[1]) + 1;
+
+  var max = 8; // Setting the maximum number of the graphs that the program will allow
+
+  // Check total number elements
+  if(total_element < max ){
+   // Adding new div container after last occurance of element class
+   $(".element:last").after("<div class='element' id='div_"+ nextindex +"'></div>");
+ 
+   // Adding element to <div>
+   $("#div_" + nextindex).append("<div class='pt-4'><button id='remove_" + nextindex + "' class='remove'>X</button>"+"<div class=' pt-1 w-75 'id='txt_"+ nextindex +"' style='height:500px;'></div> </div>");
  
   }
 
@@ -715,24 +970,170 @@ $('#btnExport').click(function(){
 
 });
 
+$('#btnExportCSV').click(function(){
+
+console.log("In Funcction CSV");
+var exportedArray = exportArray();
+console.log("New Array");
+console.log(exportedArray);
+
+let csvContent = "data:text/csv;charset=utf-8," 
+    + exportedArray.map(e => e.join(",")).join("\n");
+
+    var encodedUri = encodeURI(csvContent);
+    var link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "balloonData.csv");
+    document.body.appendChild(link); // Required for FF
+    
+    link.click(); 
+
+});
+
 function  dataURLtoFile(dataUrl, fileName, graphNumber){
-     var arr = dataUrl.split(','), mime = arr[0].match(/:(.*?);/)[1],
-         bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
-     while(n--){
+    var arr = dataUrl.split(','), mime = arr[0].match(/:(.*?);/)[1],
+        bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+    while(n--){
         u8arr[n] = bstr.charCodeAt(n);
-     }
-     var bb = new File([u8arr], fileName, {type:mime});
-     var a = document.createElement('a');
-     a.download = 'graph '+graphNumber+'.' + document.getElementById('imageFileType').value;
-     a.href = window.URL.createObjectURL(bb);
-     a.click();
+    }
+    var bb = new File([u8arr], fileName, {type:mime});
+    var a = document.createElement('a');
+    a.download = 'graph '+graphNumber+'.' + document.getElementById('imageFileType').value;
+    a.href = window.URL.createObjectURL(bb);
+    a.click();
 
-     return;
+    return;
 
- }
+}
+
+function exportArray()
+{
+var exporterArray = [];
+exporterArray.push(headerDataArray);
+// i delimits row, j delimits column
+for(let i = 0; i < bodyDataArray[0].length; i++)
+{
+  var row = [];
+  for(let j=0; j < bodyDataArray.length;j++)
+  {
+    row[j] = bodyDataArray[j][i];
+  }
+  exporterArray.push(row);
+}
+return exporterArray;
+}
+
+function disableInterface()
+{
+  document.getElementById("headerErrorNotice").disabled=true;
+  document.getElementById("plotButton").disabled = true;
+  document.getElementById("selectX").disabled = true;
+  document.getElementById("selectY").disabled = true;
+  document.getElementById("selectScienceQuestion").disabled = true;
+  document.getElementById("plotScienceQuestion").disabled = true;
+  document.getElementById("clearButton").disabled = true;
+  document.getElementById("imageFileType").disabled = true;
+  document.getElementById("btnExport").disabled = true;
+  document.getElementById("btnExportCSV").disabled = true;
+  hiddenInterface();
+}
+
+function hiddenInterface()
+{
+  document.getElementById("headerErrorNotice").hidden=true;
+  document.getElementById("plotButton").hidden=true;
+  document.getElementById("selectX").hidden = true;
+  document.getElementById("selectY").hidden = true;
+  document.getElementById("selectScienceQuestion").hidden = true;
+  document.getElementById("plotScienceQuestion").hidden = true;
+  document.getElementById("clearButton").hidden = true;
+  document.getElementById("imageFileType").hidden = true;
+  document.getElementById("btnExport").hidden = true;
+  document.getElementById("btnExportCSV").hidden = true;
+}
+
+function enableInterface()
+{
+  document.getElementById("plotButton").disabled = false;
+  document.getElementById("selectX").disabled = false;
+  document.getElementById("selectY").disabled = false;
+  document.getElementById("selectScienceQuestion").disabled = false;
+  document.getElementById("plotScienceQuestion").disabled = false;
+  document.getElementById("clearButton").disabled = false;
+  document.getElementById("imageFileType").disabled = false;
+  document.getElementById("btnExport").disabled = false;
+  document.getElementById("btnExportCSV").disabled = false;
+  showInterface();
+}
+
+function showInterface()
+{
+  document.getElementById("plotButton").hidden = false;
+  document.getElementById("selectX").hidden = false;
+  document.getElementById("selectY").hidden = false;
+  document.getElementById("selectScienceQuestion").hidden = false;
+  document.getElementById("plotScienceQuestion").hidden = false;
+  document.getElementById("clearButton").hidden = false;
+  document.getElementById("imageFileType").hidden = false;
+  document.getElementById("btnExport").hidden = false;
+  document.getElementById("btnExportCSV").hidden = false;
+}
+
+ /*------Formulas-------------------------------------------------------- */
+
+function calcAscentRate(altitudeOne,altitudeTwo,dateOne,dateTwo)
+{
+  var timeDifference = calcTimeDif(dateOne,dateTwo);
+  var altitudeDif = altitudeDifference(altitudeOne,altitudeTwo);
+  return (altitudeDif / (timeDifference))*1000;
+}
+
+function calcTimeDif(dateOne,dateTwo)
+{
+  var dateOneConvert = new Date(dateOne);
+  var dateTwoConvert = new Date(dateTwo);
+  var Difference_In_Time = dateTwoConvert.getTime() - dateOneConvert.getTime();
+  return Difference_In_Time;
+}
+
+function altitudeDifference(y1,y2)
+{
+  var total = y2 - y1;
+  return total;
+}
+
+function calcDistanceTraveled(currentLat,prevLat,currentLon,prevLon)
+{
+  var p = currentLat - prevLat;
+  var t = currentLon - prevLon;
+  var pSQ = Math.pow(p,2);
+  var tSQ = Math.pow(t,2);
+  var d = Math.sqrt(pSQ+tSQ);
+  dMeters = d * 111111;
+  return dMeters
+}
+
+function calcAbsoluteValueCourse(prevCourse,currentCourse)
+{
+  var courseDif = currentCourse - prevCourse;
+  if(courseDif > 180)
+  {
+    courseDif = 360 - courseDif;
+  }
+  courseDif = Math.abs(courseDif);
+  return courseDif;
+}
 
 /////////// Event Listeners ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 document.getElementById('file-input').addEventListener('change', readDataFile, false);  // Listener for the Data File input
 
-document.getElementById('CONFIG_FILE').addEventListener('change', readConfFile, false);  // Listener for the Data File input
+document.getElementById('mySwitch').addEventListener('change', function(){
+if(calculationSwitchState == false)
+{
+  calculationSwitchState = true;
+}
+else{
+  calculationSwitchState = false;
+}
+}, false);

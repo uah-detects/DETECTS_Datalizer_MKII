@@ -4,51 +4,80 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./DatalizerMKII.html"/>
-    <script src="plotly.min.js"></script>
-    <script src="jquery-3.6.0.min.js"></script>
-    <title>Nav Highlight</title>
+    <script src="scripts/js/jquery-3.6.0.min.js"></script>
+    <script src="scripts/js/plotly.min.js"></script>
+    <link rel="stylesheet" href="scripts/css/bootstrap.min.css">
+    <script src='scripts/js/bootstrap.bundle.min.js'></script>
+    <link rel="stylesheet" href="scripts/css/DatalizerMKII_Style.css">
+    <link rel="icon" href="images/DETECTSfavicon.ico">
+
+    <title>DETECTS Datalizer MKII</title>
 </head>
 <body>
-    
-<h1 class="title">DETECTS Datalizer MKII</h1>
 
-<select id="selectX">
-  <option>Choose an X</option>
-</select>
+  <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">
+        <img src="images/logo.png" alt="Avatar Logo" style="width:100px;" class="rounded-end"> 
+        <h1 class="title" style="display: inline;vertical-align:text-Top;" >DETECTS Datalizer MKII</h1>
+      </a>
+    </div>
+  </nav>
 
-<select id="selectY">
-  <option>Choose a Y</option>
-</select>
+  <div id = headerErrorNotice disabled hidden class="alert alert-warning alert-dismissible fade show" role="alert">
+    <strong>Error: Header Does Not Match.</strong> Check the format given in the notebook. The header must match the given format to enable the Science Question Selection feature.
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
 
-<input type = "button" onclick = "plotGraph()" value = "Plot"> 
+  <div class="text-white">
 
-<label for="file-input">Select a CSV File:</label>
-<input type="file" id="file-input" />
+    <div class="menuContainer  p-5 my-5 ">
 
-  <pre id="file-content"></pre>
-  <br>
-   <select id="selectScienceQuestion">
-    <option>Choose a Science Question</option>
-  </select>
-  <input type = "button" onclick = "plotScienceQuestion()" value = "Plot Science Question"> 
-  <label for="CONFIG_FILE">Select a Configuration File:</label>
-<input type="file" id="CONFIG_FILE" />
-  <pre id="CONFfile-content"></pre>
+    <label for="file-input">Select a CSV File:</label>
+    <br>
+    <input type="file" id="file-input" />
+    <pre id="file-content"></pre>
+    <div class="form-check form-switch">
+      <input class="form-check-input" type="checkbox" id="mySwitch" name="darkmode" value="no" checked>
+      <label class="form-check-label" for="mySwitch"> Activate to Calculate Ascent Rate, Distance Traveled, and Course in Degrees</label>
+    </div>
+    <br>
+    <select id="selectX" disabled hidden>
+      <option>Choose an X</option>
+    </select>
+
+    <select id="selectY" disabled hidden>
+      <option>Choose a Y</option>
+    </select>
+    <input type = "button" id=plotButton onclick = "plotGraph()" value = "Plot" disabled hidden>
+    <br>
+    <br>
+    <select id="selectScienceQuestion" disabled hidden>
+      <option>Choose a Science Question</option>
+    </select>
+    <input type = "button" id = plotScienceQuestion onclick = "plotScienceQuestion()" value = "Plot Science Question" disabled hidden> 
+    <br>
+    <br>
+    <input type = "button" id = clearButton onclick = "clearGraphs()" value = "Clear" disabled hidden>
+
+    <select id="imageFileType" disabled hidden>
+      <option selected="selected">png</option>
+      <option>jpeg</option>
+    </select>
+
+      <button id="btnExport" type="button" text="Export" disabled hidden > Export to Images </button>
+      <button id="btnExportCSV" type="button" text="Export" disabled hidden > Export CSV </button>
+    </div>
+  </div>
+
 
   <div class="container" >
     <div class='element' id='div_1'></div>
       <div id="txt_1" style="width:1200px;height:500px;"></div>
   </div>
 
-  <input type = "button" onclick = "clearGraphs()" value = "Clear">
-  <select id="imageFileType">
-    <option selected="selected">png</option>
-    <option>jpeg</option>
-</select>
-  <button id="btnExport" type="button" text="Export" > Export to Images
-  </button>
+
 
 </body>
-<script src="DatalizerMKII_JS.js"></script>
-
+<script src="scripts/js/DatalizerMKII_JS.js"></script>
 </html>
