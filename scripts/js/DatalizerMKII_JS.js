@@ -521,8 +521,10 @@ console.log(bodyArray);
     {
       document.getElementById("selectScienceQuestion").disabled = true;
       document.getElementById("plotScienceQuestion").disabled = true;
+      document.getElementById("colorChangeSwitch").disabled = true;
       document.getElementById("selectScienceQuestion").hidden = true;
       document.getElementById("plotScienceQuestion").hidden = true;
+      document.getElementById("colorChangeSwitch").hidden = true;
 
       //throwing sudo error
       document.getElementById("headerErrorNotice").disabled=false;
