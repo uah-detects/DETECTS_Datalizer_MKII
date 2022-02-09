@@ -698,6 +698,7 @@ function plotScienceQuestion()
   
   var count = 0;
 
+
   do //this loop finds the array that holds the selected science question
   {
     if(sQPosition == scienceQuestionArray[count][0])   //Since the Science question is always held in position zero of the array Itterate through till the Question is found
@@ -749,7 +750,8 @@ function plotScienceQuestion()
       else
       {
         var max = findMaxAlt();
-        sqPlot(xIndex,yIndex);
+        //sqPlot(xIndex,yIndex);
+        sqAsDecPlot(xIndex,yIndex,max);
       }
 
     }
@@ -759,7 +761,7 @@ function plotScienceQuestion()
 
 function findMaxAlt()
 {
-  var maxAlt = -999999.99;
+  var maxAlt = 0;
   var Index = 0;
   console.log(bodyDataArray[6].length);
   console.log(bodyDataArray[6]);
@@ -772,12 +774,6 @@ function findMaxAlt()
       Index = i;
       console.log(maxAlt);
     }
-    if(bodyDataArray[6][i] <= maxAlt)
-    {
-      //maxAlt = bodyDataArray[6][i];
-      //Index = i;
-      console.log("NOOOOO " + maxAlt);
-    }
     console.log(i);
   }
   console.log(maxAlt);
@@ -785,7 +781,7 @@ function findMaxAlt()
   val1 = 9984.33;
   val2 = 12341.12;
   console.log("TESTER: " +(val1 < val2) );
-  return maxAlt;
+  return Index;
 }
 
 //this function is used to plot the x, y data it accepts as parameters. It is built with the ability to plot more than one singular graph
@@ -920,6 +916,114 @@ function sqPlot(xIndex,yIndex)
 
     console.log('Called');
     var data = [trace1];
+
+///////////////////////////////////////////////////////////////////////////////////////////// Multi Functionality Start ///////////////////////////////////////////////
+  // Finding total number of elements added
+  var total_element = $(".element").length;
+ 
+  // last <div> with element class id
+  var lastid = $(".element:last").attr("id");
+  var split_id = lastid.split("_");
+  var nextindex = Number(split_id[1]) + 1;
+
+  var max = 8; // Setting the maximum number of the graphs that the program will allow
+
+  // Check total number elements
+  if(total_element < max ){
+   // Adding new div container after last occurance of element class
+   $(".element:last").after("<div class='element' id='div_"+ nextindex +"'></div>");
+ 
+   // Adding element to <div>
+   $("#div_" + nextindex).append("<div class='pt-4'><button id='remove_" + nextindex + "' class='remove'>X</button>"+"<div class=' pt-1 w-75 'id='txt_"+ nextindex +"' style='height:500px;'></div> </div>");
+ 
+  }
+
+   // Remove element
+ $('.container').on('click','.remove',function(){
+ 
+  var id = this.id;
+  var split_id = id.split("_");
+  var deleteindex = split_id[1];
+
+  // Remove <div> with id
+  $("#div_" + deleteindex).remove();
+
+ }); 
+
+
+  Plotly.newPlot("txt_"+ nextindex +"", data,layout);
+///////////////////////////////////////////////////////////////////////////////////////////// Multi Functionality End //////////////////////////////////////////////////
+    
+}
+
+//this function is used to plot the x, y Science Question data it accepts as parameters. It is built with the ability to plot more than one singular graph
+function sqAsDecPlot(xIndex,yIndex,maxAltIndex)
+{
+  var ascentX = [];
+  var ascentY = [];
+  var descentX = [];
+  var descentY = [];
+
+  for(let i =0; i <= maxAltIndex; i++){
+    ascentX.push(bodyDataArray[xIndex][i]);
+    ascentY.push(bodyDataArray[yIndex][i]);
+  }
+  for(let i =maxAltIndex; i <bodyDataArray[xIndex].length; i++){
+    descentX.push(bodyDataArray[xIndex][i]);
+    descentY.push(bodyDataArray[yIndex][i]);
+  }
+  var titleTEXT = prettyHeader[xIndex]+" vs "+ prettyHeader[yIndex];
+    var ascent =
+    {
+        x: ascentX,
+        y: ascentY,
+        type: 'scatter',
+        name: 'Ascent'
+
+    };
+    var descent =
+    {
+        x: descentX,
+        y: descentY,
+        type: 'scatter',
+        name: 'Descent'
+
+    };
+
+    var layout = {
+      title: {
+        text: titleTEXT,
+        font: {
+          family: 'Courier New, monospace',
+          size: 24
+        },
+        xref: 'paper',
+        x: 0.05,
+      },
+      xaxis: {
+        title: {
+          text: prettyHeader[xIndex],
+          font: {
+            family: 'Courier New, monospace',
+            size: 18,
+            color: '#7f7f7f'
+          }
+        },
+      },
+      yaxis: {
+        title: {
+          text: prettyHeader[yIndex],
+          font: {
+            family: 'Courier New, monospace',
+            size: 18,
+            color: '#7f7f7f'
+          }
+        }
+      }
+    };
+
+    console.log('Called');
+    var data = [ascent,descent];
 
 ///////////////////////////////////////////////////////////////////////////////////////////// Multi Functionality Start ///////////////////////////////////////////////
   // Finding total number of elements added
