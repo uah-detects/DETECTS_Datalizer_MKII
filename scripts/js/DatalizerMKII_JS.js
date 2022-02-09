@@ -4,9 +4,13 @@
 // to be graphed fo each science question. It is VITAL that the list of items in the verification header matches
 // the items listed in the scienceQuestionFileBody. If they do not match the program will not function properly.
 // Only change what is betweeen the "" and make sure the verification header has the respective starting % and closing %.
-var scienceQuestionVerificationHeader = "%time,lasttime,lat,lng,speed,course,altitude,Temperature (C),Pressure (Pa),Ascent Rate (M/Sec),Distance Traveled (M),Absolute Course Difference (degrees)%";
+var scienceQuestionVerificationHeader = "%time,lasttime,lat,lng,speed,course,altitude,Temperature (Celsius),Pressure (Pa),Ascent Rate (m/s),Distance Traveled (m),Absolute Course Difference (degrees)%";
 
-var prettyHeader= ["Time (24-hr UTC)","Last Time (24-hr UTC)","Lat","Lng","Speed (km/hr)","Course (degrees)","Altitude (m)","Temperature (Celcius)","Pressure (Pa)","Ascent Rate (m/s)","Distance Traveled (m)","Absolute Course Difference (degrees)"];
+// This section modifies the headers that are displayed to the graph. each Item directly corolates to the verification header above and the position
+// it is in matters as the position determines what is displayed. Make sure to denote each item with openong and closing " and a , inbetween items
+// make sure the array ends with a ];
+var prettyHeader= ["Time (24-hr UTC)","Last Time (24-hr UTC)","Lat","Lng","Speed (km/hr)","Course (degrees)","Altitude (m)","Temperature (Celsius)","Pressure (Pa)","Ascent Rate (m/s)","Distance Traveled (m)","Absolute Course Difference (degrees)"];
+
 // The scienceQuestionFileBody is the main point where the graph selections for each science objective is stored.
 // The science question is delimeted by a starting < and a closing > with the name of the science question in between.
 // Each group of graphs is seperated with a starting { and a closing } in between those curly brackets each xy graph
@@ -14,15 +18,15 @@ var prettyHeader= ["Time (24-hr UTC)","Last Time (24-hr UTC)","Lat","Lng","Speed
 // it is very important to follow this form to make sure that the file is parsed correctly. You may notice that after som lines there is a \
 // this is to escape the newline character. This \ is important for the multiline string format only. It has no impact on the data within
 // the string itself. When editing the file make sure to follow the proper format and keep the closing ".
-var scienceQuestionFileBody = "<Temperature Change>{[altitude,Temperature (C)][Temperature (C),speed][Temperature (C),time]} \
-<Pressure Change>{[altitude,Pressure (Pa)][Pressure (Pa),time][Pressure (Pa),Temperature (C)]} \
-<Time of Day>{[altitude,Temperature (C)][altitude,Pressure (Pa)][altitude,time][Temperature (C),time][Pressure (Pa),time][speed,time]} \
+var scienceQuestionFileBody = "<Temperature Change>{[altitude,Temperature (Celsius)][Temperature (Celsius),speed][Temperature (Celsius),time]} \
+<Pressure Change>{[altitude,Pressure (Pa)][Pressure (Pa),time][Pressure (Pa),Temperature (Celsius)]} \
+<Time of Day>{[altitude,Temperature (Celsius)][altitude,Pressure (Pa)][altitude,time][Temperature (Celsius),time][Pressure (Pa),time][speed,time]} \
 <Distance Traveled>{[altitude,time][altitude,speed][lat,time][lng,time][lat,lng]}\
 <Jet Stream>{[altitude,speed]}\
 <Clouds>{[altitude,time][Pressure (Pa),time]}\
-<Tropopause>{[altitude,Temperature (C)]}\
+<Tropopause>{[altitude,Temperature (Celsius)]}\
 <Pollutants>{[altitude,speed]}\
-<Ascent Rate>{[Ascent Rate (M/Sec),time][altitude,Ascent Rate (M/Sec)][Ascent Rate (M/Sec),Temperature (C)][Ascent Rate (M/Sec),Pressure (Pa)]}\
+<Ascent Rate>{[Ascent Rate (m/s),time][altitude,Ascent Rate (m/s)][Ascent Rate (m/s),Temperature (Celsius)][Ascent Rate (m/s),Pressure (Pa)]}\
 <Wind Shear>{[altitude,speed][course,time][altitude,course]}";
 
 /*------Global Values------------------------------------------------- */
@@ -31,6 +35,7 @@ var scienceQuestionArray = [];
 var headerDataArray = [];
 var bodyDataArray = [];
 var calculationSwitchState = true;
+var colorDifSwitchState = true;
 
 /*------Call On Page Load------------------------------------------------- */
 window.onload = function ()
@@ -443,7 +448,7 @@ function readDataFile(e) {
 
 
     headerLine.push("Ascent Rate (m/s)");
-    headerLine.push("Distance Travelled (m)");
+    headerLine.push("Distance Traveled (m)");
     headerLine.push("Absolute Course Difference (degrees)");
 
    for(let j = 0; j < bodyArray[0].length; j++)            //First loop is looping through the file line by line
@@ -523,6 +528,7 @@ console.log(bodyArray);
       document.getElementById("headerErrorNotice").disabled=false;
       document.getElementById("headerErrorNotice").hidden = false;
     }
+    
   };
   reader.readAsText(file);
 }
@@ -623,7 +629,7 @@ function populateDropdowns(headerArray)
 function verifyCSVHeader(stringToVer)
 {
   //This is the string that is a the top of the RAW CSV file
-  var verificationString = "time,lasttime,lat,lng,speed,course,altitude,Temperature (C),Pressure (Pa)";
+  var verificationString = "time,lasttime,lat,lng,speed,course,altitude,Temperature (Celsius),Pressure (Pa)";
 
   if (verificationString == stringToVer)
   {
@@ -698,6 +704,7 @@ function plotScienceQuestion()
   
   var count = 0;
 
+
   do //this loop finds the array that holds the selected science question
   {
     if(sQPosition == scienceQuestionArray[count][0])   //Since the Science question is always held in position zero of the array Itterate through till the Question is found
@@ -748,12 +755,44 @@ function plotScienceQuestion()
       }
       else
       {
-        sqPlot(xIndex,yIndex);
+        if(colorDifSwitchState == true){
+          var max = findMaxAlt();
+          //sqPlot(xIndex,yIndex);
+          sqAsDecPlot(xIndex,yIndex,max);
+        }
+        else{
+          sqPlot(xIndex,yIndex);
+        }
       }
 
     }
   }
 
+}
+
+function findMaxAlt()
+{
+  var maxAlt = 0;
+  var Index = 0;
+  console.log(bodyDataArray[6].length);
+  console.log(bodyDataArray[6]);
+  for(let i = 0; i < bodyDataArray[6].length; i++) {
+    console.log("New Value:--" + bodyDataArray[6][i] + "-- old value: " + maxAlt + " test: " + (bodyDataArray[6][i] >= maxAlt) + " isNaN: " + isNaN(bodyDataArray[6][i]));
+    if((bodyDataArray[6][i] - maxAlt) > 0.0)
+    {
+      console.log("New Max:" + bodyDataArray[6][i] + " old max: " + maxAlt);
+      maxAlt = bodyDataArray[6][i];
+      Index = i;
+      console.log(maxAlt);
+    }
+    console.log(i);
+  }
+  console.log(maxAlt);
+  console.log(Index);
+  val1 = 9984.33;
+  val2 = 12341.12;
+  console.log("TESTER: " +(val1 < val2) );
+  return Index;
 }
 
 //this function is used to plot the x, y data it accepts as parameters. It is built with the ability to plot more than one singular graph
@@ -842,7 +881,7 @@ function plot(xIndex,yIndex)
     
 }
 
-//this function is used to plot the x, y data it accepts as parameters. It is built with the ability to plot more than one singular graph
+//this function is used to plot the x, y Science Question data it accepts as parameters. It is built with the ability to plot more than one singular graph
 function sqPlot(xIndex,yIndex)
 {
   var titleTEXT = prettyHeader[xIndex]+" vs "+ prettyHeader[yIndex];
@@ -888,6 +927,114 @@ function sqPlot(xIndex,yIndex)
 
     console.log('Called');
     var data = [trace1];
+
+///////////////////////////////////////////////////////////////////////////////////////////// Multi Functionality Start ///////////////////////////////////////////////
+  // Finding total number of elements added
+  var total_element = $(".element").length;
+ 
+  // last <div> with element class id
+  var lastid = $(".element:last").attr("id");
+  var split_id = lastid.split("_");
+  var nextindex = Number(split_id[1]) + 1;
+
+  var max = 8; // Setting the maximum number of the graphs that the program will allow
+
+  // Check total number elements
+  if(total_element < max ){
+   // Adding new div container after last occurance of element class
+   $(".element:last").after("<div class='element' id='div_"+ nextindex +"'></div>");
+ 
+   // Adding element to <div>
+   $("#div_" + nextindex).append("<div class='pt-4'><button id='remove_" + nextindex + "' class='remove'>X</button>"+"<div class=' pt-1 w-75 'id='txt_"+ nextindex +"' style='height:500px;'></div> </div>");
+ 
+  }
+
+   // Remove element
+ $('.container').on('click','.remove',function(){
+ 
+  var id = this.id;
+  var split_id = id.split("_");
+  var deleteindex = split_id[1];
+
+  // Remove <div> with id
+  $("#div_" + deleteindex).remove();
+
+ }); 
+
+
+  Plotly.newPlot("txt_"+ nextindex +"", data,layout);
+///////////////////////////////////////////////////////////////////////////////////////////// Multi Functionality End //////////////////////////////////////////////////
+    
+}
+
+//this function is used to plot the x, y Science Question data it accepts as parameters. It is built with the ability to plot more than one singular graph
+function sqAsDecPlot(xIndex,yIndex,maxAltIndex)
+{
+  var ascentX = [];
+  var ascentY = [];
+  var descentX = [];
+  var descentY = [];
+
+  for(let i =0; i <= maxAltIndex; i++){
+    ascentX.push(bodyDataArray[xIndex][i]);
+    ascentY.push(bodyDataArray[yIndex][i]);
+  }
+  for(let i =maxAltIndex; i <bodyDataArray[xIndex].length; i++){
+    descentX.push(bodyDataArray[xIndex][i]);
+    descentY.push(bodyDataArray[yIndex][i]);
+  }
+  var titleTEXT = prettyHeader[xIndex]+" vs "+ prettyHeader[yIndex];
+    var ascent =
+    {
+        x: ascentX,
+        y: ascentY,
+        type: 'scatter',
+        name: 'Ascent'
+
+    };
+    var descent =
+    {
+        x: descentX,
+        y: descentY,
+        type: 'scatter',
+        name: 'Descent'
+
+    };
+
+    var layout = {
+      title: {
+        text: titleTEXT,
+        font: {
+          family: 'Courier New, monospace',
+          size: 24
+        },
+        xref: 'paper',
+        x: 0.05,
+      },
+      xaxis: {
+        title: {
+          text: prettyHeader[xIndex],
+          font: {
+            family: 'Courier New, monospace',
+            size: 18,
+            color: '#7f7f7f'
+          }
+        },
+      },
+      yaxis: {
+        title: {
+          text: prettyHeader[yIndex],
+          font: {
+            family: 'Courier New, monospace',
+            size: 18,
+            color: '#7f7f7f'
+          }
+        }
+      }
+    };
+
+    console.log('Called');
+    var data = [ascent,descent];
 
 ///////////////////////////////////////////////////////////////////////////////////////////// Multi Functionality Start ///////////////////////////////////////////////
   // Finding total number of elements added
@@ -1030,6 +1177,7 @@ function disableInterface()
   document.getElementById("selectX").disabled = true;
   document.getElementById("selectY").disabled = true;
   document.getElementById("selectScienceQuestion").disabled = true;
+  document.getElementById("colorChangeSwitch").disabled = true;
   document.getElementById("plotScienceQuestion").disabled = true;
   document.getElementById("clearButton").disabled = true;
   document.getElementById("imageFileType").disabled = true;
@@ -1045,6 +1193,7 @@ function hiddenInterface()
   document.getElementById("selectX").hidden = true;
   document.getElementById("selectY").hidden = true;
   document.getElementById("selectScienceQuestion").hidden = true;
+  document.getElementById("colorChangeSwitch").hidden = true;
   document.getElementById("plotScienceQuestion").hidden = true;
   document.getElementById("clearButton").hidden = true;
   document.getElementById("imageFileType").hidden = true;
@@ -1058,6 +1207,7 @@ function enableInterface()
   document.getElementById("selectX").disabled = false;
   document.getElementById("selectY").disabled = false;
   document.getElementById("selectScienceQuestion").disabled = false;
+  document.getElementById("colorChangeSwitch").disabled = false;
   document.getElementById("plotScienceQuestion").disabled = false;
   document.getElementById("clearButton").disabled = false;
   document.getElementById("imageFileType").disabled = false;
@@ -1072,6 +1222,7 @@ function showInterface()
   document.getElementById("selectX").hidden = false;
   document.getElementById("selectY").hidden = false;
   document.getElementById("selectScienceQuestion").hidden = false;
+  document.getElementById("colorChangeSwitch").hidden = false;
   document.getElementById("plotScienceQuestion").hidden = false;
   document.getElementById("clearButton").hidden = false;
   document.getElementById("imageFileType").hidden = false;
@@ -1116,11 +1267,12 @@ function calcDistanceTraveled(currentLat,prevLat,currentLon,prevLon)
 function calcAbsoluteValueCourse(prevCourse,currentCourse)
 {
   var courseDif = currentCourse - prevCourse;
+  courseDif = Math.abs(courseDif);
   if(courseDif > 180)
   {
     courseDif = 360 - courseDif;
   }
-  courseDif = Math.abs(courseDif);
+
   return courseDif;
 }
 
@@ -1137,3 +1289,13 @@ else{
   calculationSwitchState = false;
 }
 }, false);
+
+document.getElementById('mySwitchColor').addEventListener('change', function(){
+  if(calculationSwitchState == false)
+  {
+    colorDifSwitchState = true;
+  }
+  else{
+    colorDifSwitchState = false;
+  }
+  }, false);
