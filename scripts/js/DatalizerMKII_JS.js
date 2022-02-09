@@ -6,7 +6,11 @@
 // Only change what is betweeen the "" and make sure the verification header has the respective starting % and closing %.
 var scienceQuestionVerificationHeader = "%time,lasttime,lat,lng,speed,course,altitude,Temperature (Celsius),Pressure (Pa),Ascent Rate (m/s),Distance Traveled (m),Absolute Course Difference (degrees)%";
 
+// This section modifies the headers that are displayed to the graph. each Item directly corolates to the verification header above and the position
+// it is in matters as the position determines what is displayed. Make sure to denote each item with openong and closing " and a , inbetween items
+// make sure the array ends with a ];
 var prettyHeader= ["Time (24-hr UTC)","Last Time (24-hr UTC)","Lat","Lng","Speed (km/hr)","Course (degrees)","Altitude (m)","Temperature (Celsius)","Pressure (Pa)","Ascent Rate (m/s)","Distance Traveled (m)","Absolute Course Difference (degrees)"];
+
 // The scienceQuestionFileBody is the main point where the graph selections for each science objective is stored.
 // The science question is delimeted by a starting < and a closing > with the name of the science question in between.
 // Each group of graphs is seperated with a starting { and a closing } in between those curly brackets each xy graph
@@ -524,6 +528,7 @@ console.log(bodyArray);
       document.getElementById("headerErrorNotice").disabled=false;
       document.getElementById("headerErrorNotice").hidden = false;
     }
+    
   };
   reader.readAsText(file);
 }
