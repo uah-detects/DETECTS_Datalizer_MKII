@@ -31,6 +31,7 @@ var scienceQuestionArray = [];
 var headerDataArray = [];
 var bodyDataArray = [];
 var calculationSwitchState = true;
+var colorDifSwitchState = true;
 
 /*------Call On Page Load------------------------------------------------- */
 window.onload = function ()
@@ -749,9 +750,14 @@ function plotScienceQuestion()
       }
       else
       {
-        var max = findMaxAlt();
-        //sqPlot(xIndex,yIndex);
-        sqAsDecPlot(xIndex,yIndex,max);
+        if(colorDifSwitchState == true){
+          var max = findMaxAlt();
+          //sqPlot(xIndex,yIndex);
+          sqAsDecPlot(xIndex,yIndex,max);
+        }
+        else{
+          sqPlot(xIndex,yIndex);
+        }
       }
 
     }
@@ -1166,6 +1172,7 @@ function disableInterface()
   document.getElementById("selectX").disabled = true;
   document.getElementById("selectY").disabled = true;
   document.getElementById("selectScienceQuestion").disabled = true;
+  document.getElementById("colorChangeSwitch").disabled = true;
   document.getElementById("plotScienceQuestion").disabled = true;
   document.getElementById("clearButton").disabled = true;
   document.getElementById("imageFileType").disabled = true;
@@ -1181,6 +1188,7 @@ function hiddenInterface()
   document.getElementById("selectX").hidden = true;
   document.getElementById("selectY").hidden = true;
   document.getElementById("selectScienceQuestion").hidden = true;
+  document.getElementById("colorChangeSwitch").hidden = true;
   document.getElementById("plotScienceQuestion").hidden = true;
   document.getElementById("clearButton").hidden = true;
   document.getElementById("imageFileType").hidden = true;
@@ -1194,6 +1202,7 @@ function enableInterface()
   document.getElementById("selectX").disabled = false;
   document.getElementById("selectY").disabled = false;
   document.getElementById("selectScienceQuestion").disabled = false;
+  document.getElementById("colorChangeSwitch").disabled = false;
   document.getElementById("plotScienceQuestion").disabled = false;
   document.getElementById("clearButton").disabled = false;
   document.getElementById("imageFileType").disabled = false;
@@ -1208,6 +1217,7 @@ function showInterface()
   document.getElementById("selectX").hidden = false;
   document.getElementById("selectY").hidden = false;
   document.getElementById("selectScienceQuestion").hidden = false;
+  document.getElementById("colorChangeSwitch").hidden = false;
   document.getElementById("plotScienceQuestion").hidden = false;
   document.getElementById("clearButton").hidden = false;
   document.getElementById("imageFileType").hidden = false;
@@ -1274,3 +1284,13 @@ else{
   calculationSwitchState = false;
 }
 }, false);
+
+document.getElementById('mySwitchColor').addEventListener('change', function(){
+  if(calculationSwitchState == false)
+  {
+    colorDifSwitchState = true;
+  }
+  else{
+    colorDifSwitchState = false;
+  }
+  }, false);
