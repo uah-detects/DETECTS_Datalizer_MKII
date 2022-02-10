@@ -976,13 +976,17 @@ function sqAsDecPlot(xIndex,yIndex,maxAltIndex)
 {
   var ascentX = [];
   var ascentY = [];
+  var popX = [];
+  var popY = [];
   var descentX = [];
   var descentY = [];
 
-  for(let i =0; i <= maxAltIndex; i++){
+  for(let i =0; i < maxAltIndex; i++){
     ascentX.push(bodyDataArray[xIndex][i]);
     ascentY.push(bodyDataArray[yIndex][i]);
   }
+  popX.push(bodyDataArray[xIndex][maxAltIndex]);
+  popY.push(bodyDataArray[yIndex][maxAltIndex]);
   for(let i =maxAltIndex; i <bodyDataArray[xIndex].length; i++){
     descentX.push(bodyDataArray[xIndex][i]);
     descentY.push(bodyDataArray[yIndex][i]);
@@ -994,6 +998,14 @@ function sqAsDecPlot(xIndex,yIndex,maxAltIndex)
         y: ascentY,
         type: 'scatter',
         name: 'Ascent'
+
+    };
+    var pop =
+    {
+        x: popX,
+        y: popY,
+        type: 'scatter',
+        name: 'Pop'
 
     };
     var descent =
@@ -1038,7 +1050,7 @@ function sqAsDecPlot(xIndex,yIndex,maxAltIndex)
     };
 
     console.log('Called');
-    var data = [ascent,descent];
+    var data = [ascent,pop,descent];
 
 ///////////////////////////////////////////////////////////////////////////////////////////// Multi Functionality Start ///////////////////////////////////////////////
   // Finding total number of elements added
