@@ -11,6 +11,9 @@ var scienceQuestionVerificationHeader = "%time,lasttime,lat,lng,speed,course,alt
 // make sure the array ends with a ];
 var prettyHeader= ["Time (24-hr UTC)","Last Time (24-hr UTC)","Lat","Lng","Speed (km/hr)","Course (degrees)","Altitude (m)","Temperature (Celsius)","Pressure (Pa)","Ascent Rate (m/s)","Distance Traveled (m)","Absolute Course Difference (degrees)"];
 
+//Can go above ten if you would like, but You can only take pictures of the first ten graphs.
+var maxGraphTotal = 20;
+
 // The scienceQuestionFileBody is the main point where the graph selections for each science objective is stored.
 // The science question is delimeted by a starting < and a closing > with the name of the science question in between.
 // Each group of graphs is seperated with a starting { and a closing } in between those curly brackets each xy graph
@@ -36,6 +39,7 @@ var headerDataArray = [];
 var bodyDataArray = [];
 var calculationSwitchState = true;
 var colorDifSwitchState = true;
+var fileValid = true;
 
 /*------Call On Page Load------------------------------------------------- */
 window.onload = function ()
@@ -529,6 +533,12 @@ console.log(bodyArray);
       //throwing sudo error
       document.getElementById("headerErrorNotice").disabled=false;
       document.getElementById("headerErrorNotice").hidden = false;
+      fileValid = false;
+      console.log("False");
+    }
+    else{
+      fileValid = true;
+      console.log("True");
     }
     
   };
@@ -685,7 +695,20 @@ function plotGraph()
   }
   else
   {
-    plot(xIndex,yIndex);
+    if(colorDifSwitchState == true){
+      if(fileValid == true)
+      {
+        var max = findMaxAlt();
+        sqAsDecPlot(xIndex,yIndex,max);
+      }
+      else{
+        sqPlot(xIndex,yIndex);
+      }
+    }
+    else{
+      plot(xIndex,yIndex);
+    }
+
   }
 
 }
@@ -758,9 +781,8 @@ function plotScienceQuestion()
       else
       {
         if(colorDifSwitchState == true){
-          var max = findMaxAlt();
-          //sqPlot(xIndex,yIndex);
-          sqAsDecPlot(xIndex,yIndex,max);
+            var max = findMaxAlt();
+            sqAsDecPlot(xIndex,yIndex,max);
         }
         else{
           sqPlot(xIndex,yIndex);
@@ -853,10 +875,10 @@ function plot(xIndex,yIndex)
   var split_id = lastid.split("_");
   var nextindex = Number(split_id[1]) + 1;
 
-  var max = 8; // Setting the maximum number of the graphs that the program will allow
+  var max = maxGraphTotal; // Setting the maximum number of the graphs that the program will allow
 
   // Check total number elements
-  if(total_element < max ){
+  if(total_element <= max ){
    // Adding new div container after last occurance of element class
    $(".element:last").after("<div class='element' id='div_"+ nextindex +"'></div>");
  
@@ -939,10 +961,10 @@ function sqPlot(xIndex,yIndex)
   var split_id = lastid.split("_");
   var nextindex = Number(split_id[1]) + 1;
 
-  var max = 8; // Setting the maximum number of the graphs that the program will allow
+  var max = maxGraphTotal; // Setting the maximum number of the graphs that the program will allow
 
   // Check total number elements
-  if(total_element < max ){
+  if(total_element <= max ){
    // Adding new div container after last occurance of element class
    $(".element:last").after("<div class='element' id='div_"+ nextindex +"'></div>");
  
@@ -974,13 +996,17 @@ function sqAsDecPlot(xIndex,yIndex,maxAltIndex)
 {
   var ascentX = [];
   var ascentY = [];
+  var popX = [];
+  var popY = [];
   var descentX = [];
   var descentY = [];
 
-  for(let i =0; i <= maxAltIndex; i++){
+  for(let i =0; i < maxAltIndex; i++){
     ascentX.push(bodyDataArray[xIndex][i]);
     ascentY.push(bodyDataArray[yIndex][i]);
   }
+  popX.push(bodyDataArray[xIndex][maxAltIndex]);
+  popY.push(bodyDataArray[yIndex][maxAltIndex]);
   for(let i =maxAltIndex; i <bodyDataArray[xIndex].length; i++){
     descentX.push(bodyDataArray[xIndex][i]);
     descentY.push(bodyDataArray[yIndex][i]);
@@ -992,6 +1018,14 @@ function sqAsDecPlot(xIndex,yIndex,maxAltIndex)
         y: ascentY,
         type: 'scatter',
         name: 'Ascent'
+
+    };
+    var pop =
+    {
+        x: popX,
+        y: popY,
+        type: 'scatter',
+        name: 'Pop'
 
     };
     var descent =
@@ -1036,7 +1070,7 @@ function sqAsDecPlot(xIndex,yIndex,maxAltIndex)
     };
 
     console.log('Called');
-    var data = [ascent,descent];
+    var data = [ascent,pop,descent];
 
 ///////////////////////////////////////////////////////////////////////////////////////////// Multi Functionality Start ///////////////////////////////////////////////
   // Finding total number of elements added
@@ -1047,10 +1081,10 @@ function sqAsDecPlot(xIndex,yIndex,maxAltIndex)
   var split_id = lastid.split("_");
   var nextindex = Number(split_id[1]) + 1;
 
-  var max = 8; // Setting the maximum number of the graphs that the program will allow
+  var max = maxGraphTotal; // Setting the maximum number of the graphs that the program will allow
 
   // Check total number elements
-  if(total_element < max ){
+  if(total_element <= max ){
    // Adding new div container after last occurance of element class
    $(".element:last").after("<div class='element' id='div_"+ nextindex +"'></div>");
  
@@ -1115,6 +1149,9 @@ $('#btnExport').click(function(){
         console.log(dataURL);
         dataURLtoFile(dataURL, "File", i - 1);
       });
+      if(i == 12){
+        window.alert("Error: Only 10 graphs can be exported at one time. Please close some of your first 10 graphs to continue exporting pictures.");
+      }
     }
 
 });
@@ -1293,11 +1330,13 @@ else{
 }, false);
 
 document.getElementById('mySwitchColor').addEventListener('change', function(){
-  if(calculationSwitchState == false)
+  if(colorDifSwitchState == false)
   {
     colorDifSwitchState = true;
+    console.log("set");
   }
   else{
     colorDifSwitchState = false;
+    console.log("unset");
   }
   }, false);
