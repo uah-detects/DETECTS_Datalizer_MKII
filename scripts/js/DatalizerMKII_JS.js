@@ -11,6 +11,9 @@ var scienceQuestionVerificationHeader = "%time,lasttime,lat,lng,speed,course,alt
 // make sure the array ends with a ];
 var prettyHeader= ["Time (24-hr UTC)","Last Time (24-hr UTC)","Lat","Lng","Speed (km/hr)","Course (degrees)","Altitude (m)","Temperature (Celsius)","Pressure (Pa)","Ascent Rate (m/s)","Distance Traveled (m)","Absolute Course Difference (degrees)"];
 
+//Can go above ten if you would like, but You can only take pictures of the first ten graphs.
+var maxGraphTotal = 10;
+
 // The scienceQuestionFileBody is the main point where the graph selections for each science objective is stored.
 // The science question is delimeted by a starting < and a closing > with the name of the science question in between.
 // Each group of graphs is seperated with a starting { and a closing } in between those curly brackets each xy graph
@@ -853,10 +856,10 @@ function plot(xIndex,yIndex)
   var split_id = lastid.split("_");
   var nextindex = Number(split_id[1]) + 1;
 
-  var max = 8; // Setting the maximum number of the graphs that the program will allow
+  var max = maxGraphTotal; // Setting the maximum number of the graphs that the program will allow
 
   // Check total number elements
-  if(total_element < max ){
+  if(total_element <= max ){
    // Adding new div container after last occurance of element class
    $(".element:last").after("<div class='element' id='div_"+ nextindex +"'></div>");
  
@@ -939,10 +942,10 @@ function sqPlot(xIndex,yIndex)
   var split_id = lastid.split("_");
   var nextindex = Number(split_id[1]) + 1;
 
-  var max = 8; // Setting the maximum number of the graphs that the program will allow
+  var max = maxGraphTotal; // Setting the maximum number of the graphs that the program will allow
 
   // Check total number elements
-  if(total_element < max ){
+  if(total_element <= max ){
    // Adding new div container after last occurance of element class
    $(".element:last").after("<div class='element' id='div_"+ nextindex +"'></div>");
  
@@ -1047,10 +1050,10 @@ function sqAsDecPlot(xIndex,yIndex,maxAltIndex)
   var split_id = lastid.split("_");
   var nextindex = Number(split_id[1]) + 1;
 
-  var max = 8; // Setting the maximum number of the graphs that the program will allow
+  var max = maxGraphTotal; // Setting the maximum number of the graphs that the program will allow
 
   // Check total number elements
-  if(total_element < max ){
+  if(total_element <= max ){
    // Adding new div container after last occurance of element class
    $(".element:last").after("<div class='element' id='div_"+ nextindex +"'></div>");
  
