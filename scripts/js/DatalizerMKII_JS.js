@@ -12,7 +12,7 @@ var scienceQuestionVerificationHeader = "%time,lasttime,lat,lng,speed,course,alt
 var prettyHeader= ["Time (24-hr UTC)","Last Time (24-hr UTC)","Lat","Lng","Speed (km/hr)","Course (degrees)","Altitude (m)","Temperature (Celsius)","Pressure (Pa)","Ascent Rate (m/s)","Distance Traveled (m)","Absolute Course Difference (degrees)"];
 
 //Can go above ten if you would like, but You can only take pictures of the first ten graphs.
-var maxGraphTotal = 10;
+var maxGraphTotal = 20;
 
 // The scienceQuestionFileBody is the main point where the graph selections for each science objective is stored.
 // The science question is delimeted by a starting < and a closing > with the name of the science question in between.
@@ -1149,6 +1149,9 @@ $('#btnExport').click(function(){
         console.log(dataURL);
         dataURLtoFile(dataURL, "File", i - 1);
       });
+      if(i == 12){
+        window.alert("Error: Only 10 graphs can be exported at one time. Please close some of your first 10 graphs to continue exporting pictures.");
+      }
     }
 
 });
