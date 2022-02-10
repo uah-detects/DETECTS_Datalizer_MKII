@@ -762,7 +762,6 @@ function plotScienceQuestion()
       {
         if(colorDifSwitchState == true){
           var max = findMaxAlt();
-          //sqPlot(xIndex,yIndex);
           sqAsDecPlot(xIndex,yIndex,max);
         }
         else{
@@ -1296,11 +1295,13 @@ else{
 }, false);
 
 document.getElementById('mySwitchColor').addEventListener('change', function(){
-  if(calculationSwitchState == false)
+  if(colorDifSwitchState == false)
   {
     colorDifSwitchState = true;
+    console.log("set");
   }
   else{
     colorDifSwitchState = false;
+    console.log("unset");
   }
   }, false);
