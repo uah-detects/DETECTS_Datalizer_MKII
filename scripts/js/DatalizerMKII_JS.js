@@ -39,6 +39,7 @@ var headerDataArray = [];
 var bodyDataArray = [];
 var calculationSwitchState = true;
 var colorDifSwitchState = true;
+var fileValid = true;
 
 /*------Call On Page Load------------------------------------------------- */
 window.onload = function ()
@@ -532,6 +533,12 @@ console.log(bodyArray);
       //throwing sudo error
       document.getElementById("headerErrorNotice").disabled=false;
       document.getElementById("headerErrorNotice").hidden = false;
+      fileValid = false;
+      console.log("False");
+    }
+    else{
+      fileValid = true;
+      console.log("True");
     }
     
   };
@@ -688,7 +695,20 @@ function plotGraph()
   }
   else
   {
-    plot(xIndex,yIndex);
+    if(colorDifSwitchState == true){
+      if(fileValid == true)
+      {
+        var max = findMaxAlt();
+        sqAsDecPlot(xIndex,yIndex,max);
+      }
+      else{
+        sqPlot(xIndex,yIndex);
+      }
+    }
+    else{
+      plot(xIndex,yIndex);
+    }
+
   }
 
 }
@@ -761,8 +781,8 @@ function plotScienceQuestion()
       else
       {
         if(colorDifSwitchState == true){
-          var max = findMaxAlt();
-          sqAsDecPlot(xIndex,yIndex,max);
+            var max = findMaxAlt();
+            sqAsDecPlot(xIndex,yIndex,max);
         }
         else{
           sqPlot(xIndex,yIndex);
