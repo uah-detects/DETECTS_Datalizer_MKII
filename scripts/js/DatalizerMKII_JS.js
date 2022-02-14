@@ -21,16 +21,16 @@ var maxGraphTotal = 20;
 // it is very important to follow this form to make sure that the file is parsed correctly. You may notice that after som lines there is a \
 // this is to escape the newline character. This \ is important for the multiline string format only. It has no impact on the data within
 // the string itself. When editing the file make sure to follow the proper format and keep the closing ".
-var scienceQuestionFileBody = "<Temperature Change>{[altitude,Temperature (Celsius)][Temperature (Celsius),speed][Temperature (Celsius),time]} \
-<Pressure Change>{[altitude,Pressure (Pa)][Pressure (Pa),time][Pressure (Pa),Temperature (Celsius)]} \
-<Time of Day>{[altitude,Temperature (Celsius)][altitude,Pressure (Pa)][altitude,time][Temperature (Celsius),time][Pressure (Pa),time][speed,time]} \
-<Distance Traveled>{[altitude,time][altitude,speed][lat,time][lng,time][lat,lng]}\
-<Jet Stream>{[altitude,speed]}\
-<Clouds>{[altitude,time][Pressure (Pa),time]}\
-<Tropopause>{[altitude,Temperature (Celsius)]}\
-<Pollutants>{[altitude,speed]}\
-<Ascent Rate>{[Ascent Rate (m/s),time][altitude,Ascent Rate (m/s)][Ascent Rate (m/s),Temperature (Celsius)][Ascent Rate (m/s),Pressure (Pa)]}\
-<Wind Shear>{[altitude,speed][course,time][altitude,course]}";
+var scienceQuestionFileBody = "<Temperature Change>{[Temperature (Celsius),altitude][Temperature (Celsius),speed][time,Temperature (Celsius)]} \
+<Pressure Change>{[Pressure (Pa),altitude][time,Pressure (Pa)][Temperature (Celsius),Pressure (Pa)]} \
+<Time of Day>{[Temperature (Celsius),altitude][Pressure (Pa),altitude][time,altitude][time,Temperature (Celsius)][time,Pressure (Pa)][time,speed]} \
+<Distance Traveled>{[time,altitude][speed,altitude][time,Distance Traveled (m)][speed,Distance Traveled (m)][Distance Traveled (m),altitude]}\
+<Jet Stream>{[speed,altitude]}\
+<Clouds>{[time,altitude][time,Pressure (Pa)]}\
+<Tropopause>{[Temperature (Celsius),altitude]}\
+<Pollutants>{[speed,altitude][Distance Traveled (m),altitude][speed,Distance Traveled (m)]}\
+<Ascent Rate>{[time,Ascent Rate (m/s)][Ascent Rate (m/s),altitude][Temperature (Celsius),Ascent Rate (m/s)][Pressure (Pa),Ascent Rate (m/s)]}\
+<Wind Shear>{[speed,altitude][speed,Absolute Course Difference (degrees)][time,Absolute Course Difference (degrees)][Absolute Course Difference (degrees),altitude]}";
 
 /*------Global Values------------------------------------------------- */
 var verificationHeaderArray = [];
