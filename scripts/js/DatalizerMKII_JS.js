@@ -1,3 +1,6 @@
+/*Written by: Samuel Strong for the UAH DETECTS STEM outreach project
+* Email: sts0020@uah.edu
+*/
 /*------Science Question Graph Variables------------------------------------------------- */
 
 // This verification Header Insures that the data from the CSV file matches the values that have been preselected
