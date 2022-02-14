@@ -14,6 +14,9 @@ var prettyHeader= ["Time (24-hr UTC)","Last Time (24-hr UTC)","Lat","Lng","Speed
 //Can go above ten if you would like, but You can only take pictures of the first ten graphs.
 var maxGraphTotal = 20;
 
+//This is the string that is a the top of the RAW CSV file. It must match to verify that the csv file is a valid csv file.
+var csvVerificationString = "time,lasttime,lat,lng,speed,course,altitude,Temperature (Celsius),Pressure (Pa)";
+
 // The scienceQuestionFileBody is the main point where the graph selections for each science objective is stored.
 // The science question is delimeted by a starting < and a closing > with the name of the science question in between.
 // Each group of graphs is seperated with a starting { and a closing } in between those curly brackets each xy graph
@@ -640,10 +643,7 @@ function populateDropdowns(headerArray)
 
 function verifyCSVHeader(stringToVer)
 {
-  //This is the string that is a the top of the RAW CSV file
-  var verificationString = "time,lasttime,lat,lng,speed,course,altitude,Temperature (Celsius),Pressure (Pa)";
-
-  if (verificationString == stringToVer)
+  if (csvVerificationString == stringToVer)
   {
     return true;
   }
@@ -702,7 +702,7 @@ function plotGraph()
         sqAsDecPlot(xIndex,yIndex,max);
       }
       else{
-        sqPlot(xIndex,yIndex);
+        plot(xIndex,yIndex);
       }
     }
     else{
@@ -798,24 +798,13 @@ function findMaxAlt()
 {
   var maxAlt = 0;
   var Index = 0;
-  console.log(bodyDataArray[6].length);
-  console.log(bodyDataArray[6]);
   for(let i = 0; i < bodyDataArray[6].length; i++) {
-    console.log("New Value:--" + bodyDataArray[6][i] + "-- old value: " + maxAlt + " test: " + (bodyDataArray[6][i] >= maxAlt) + " isNaN: " + isNaN(bodyDataArray[6][i]));
     if((bodyDataArray[6][i] - maxAlt) > 0.0)
     {
-      console.log("New Max:" + bodyDataArray[6][i] + " old max: " + maxAlt);
       maxAlt = bodyDataArray[6][i];
       Index = i;
-      console.log(maxAlt);
     }
-    console.log(i);
   }
-  console.log(maxAlt);
-  console.log(Index);
-  val1 = 9984.33;
-  val2 = 12341.12;
-  console.log("TESTER: " +(val1 < val2) );
   return Index;
 }
 
@@ -883,7 +872,7 @@ function plot(xIndex,yIndex)
    $(".element:last").after("<div class='element' id='div_"+ nextindex +"'></div>");
  
    // Adding element to <div>
-   $("#div_" + nextindex).append("<div class='pt-4'><button id='remove_" + nextindex + "' class='remove'>X</button>"+"<div class=' pt-1 w-75 'id='txt_"+ nextindex +"' style='height:500px;'></div> </div>");
+   $("#div_" + nextindex).append("<div class='pt-4'><button id='remove_" + nextindex + "' class='remove'>X</button>"+"<div class=' pt-1 w-100 'id='txt_"+ nextindex +"' style='height:500px;'></div> </div>");
  
   }
 
@@ -969,7 +958,7 @@ function sqPlot(xIndex,yIndex)
    $(".element:last").after("<div class='element' id='div_"+ nextindex +"'></div>");
  
    // Adding element to <div>
-   $("#div_" + nextindex).append("<div class='pt-4'><button id='remove_" + nextindex + "' class='remove'>X</button>"+"<div class=' pt-1 w-75 'id='txt_"+ nextindex +"' style='height:500px;'></div> </div>");
+   $("#div_" + nextindex).append("<div class='pt-4'><button id='remove_" + nextindex + "' class='remove'>X</button>"+"<div class=' pt-1 w-100 'id='txt_"+ nextindex +"' style='height:500px;'></div> </div>");
  
   }
 
@@ -1001,7 +990,7 @@ function sqAsDecPlot(xIndex,yIndex,maxAltIndex)
   var descentX = [];
   var descentY = [];
 
-  for(let i =0; i < maxAltIndex; i++){
+  for(let i =0; i <= maxAltIndex; i++){
     ascentX.push(bodyDataArray[xIndex][i]);
     ascentY.push(bodyDataArray[yIndex][i]);
   }
@@ -1089,7 +1078,7 @@ function sqAsDecPlot(xIndex,yIndex,maxAltIndex)
    $(".element:last").after("<div class='element' id='div_"+ nextindex +"'></div>");
  
    // Adding element to <div>
-   $("#div_" + nextindex).append("<div class='pt-4'><button id='remove_" + nextindex + "' class='remove'>X</button>"+"<div class=' pt-1 w-75 'id='txt_"+ nextindex +"' style='height:500px;'></div> </div>");
+   $("#div_" + nextindex).append("<div class='pt-4'><button id='remove_" + nextindex + "' class='remove'>X</button>"+"<div class=' pt-1 w-100 'id='txt_"+ nextindex +"' style='height:500px;'></div> </div>");
  
   }
 
