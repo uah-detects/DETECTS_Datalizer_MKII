@@ -32,7 +32,7 @@ var scienceQuestionFileBody = "<Temperature Change>{[Temperature (Celsius),altit
 <Time of Day>{[Temperature (Celsius),altitude][Pressure (Pa),altitude][time,altitude][time,Temperature (Celsius)][time,Pressure (Pa)][time,speed][time,Distance Traveled (m)]} \
 <Distance Traveled>{[time,altitude][speed,altitude][time,Distance Traveled (m)][speed,Distance Traveled (m)][Distance Traveled (m),altitude]}\
 <Jet Stream>{[speed,altitude]}\
-<Clouds>{[time,altitude][time,Pressure (Pa)]}\
+<Clouds>{[time,altitude][time,Pressure (Pa)][Ascent Rate (m/s),altitude]}\
 <Tropopause>{[Temperature (Celsius),altitude]}\
 <Pollutants>{[speed,altitude][Distance Traveled (m),altitude][speed,Distance Traveled (m)]}\
 <Ascent Rate>{[time,Ascent Rate (m/s)][Ascent Rate (m/s),altitude][Temperature (Celsius),Ascent Rate (m/s)][Pressure (Pa),Ascent Rate (m/s)][Distance Traveled (m),Ascent Rate (m/s)]}\
