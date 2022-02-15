@@ -29,13 +29,13 @@ var csvVerificationString = "time,lasttime,lat,lng,speed,course,altitude,Tempera
 // the string itself. When editing the file make sure to follow the proper format and keep the closing ".
 var scienceQuestionFileBody = "<Temperature Change>{[Temperature (Celsius),altitude][Temperature (Celsius),speed][time,Temperature (Celsius)]} \
 <Pressure Change>{[Pressure (Pa),altitude][time,Pressure (Pa)][Temperature (Celsius),Pressure (Pa)]} \
-<Time of Day>{[Temperature (Celsius),altitude][Pressure (Pa),altitude][time,altitude][time,Temperature (Celsius)][time,Pressure (Pa)][time,speed]} \
+<Time of Day>{[Temperature (Celsius),altitude][Pressure (Pa),altitude][time,altitude][time,Temperature (Celsius)][time,Pressure (Pa)][time,speed][time,Distance Traveled (m)]} \
 <Distance Traveled>{[time,altitude][speed,altitude][time,Distance Traveled (m)][speed,Distance Traveled (m)][Distance Traveled (m),altitude]}\
 <Jet Stream>{[speed,altitude]}\
 <Clouds>{[time,altitude][time,Pressure (Pa)]}\
 <Tropopause>{[Temperature (Celsius),altitude]}\
 <Pollutants>{[speed,altitude][Distance Traveled (m),altitude][speed,Distance Traveled (m)]}\
-<Ascent Rate>{[time,Ascent Rate (m/s)][Ascent Rate (m/s),altitude][Temperature (Celsius),Ascent Rate (m/s)][Pressure (Pa),Ascent Rate (m/s)]}\
+<Ascent Rate>{[time,Ascent Rate (m/s)][Ascent Rate (m/s),altitude][Temperature (Celsius),Ascent Rate (m/s)][Pressure (Pa),Ascent Rate (m/s)][Distance Traveled (m),Ascent Rate (m/s)]}\
 <Wind Shear>{[speed,altitude][speed,Absolute Course Difference (degrees)][time,Absolute Course Difference (degrees)][Absolute Course Difference (degrees),altitude]}";
 
 /*------Global Values------------------------------------------------- */
