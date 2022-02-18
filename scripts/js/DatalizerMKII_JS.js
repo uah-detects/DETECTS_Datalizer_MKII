@@ -7,12 +7,12 @@
 // to be graphed fo each science question. It is VITAL that the list of items in the verification header matches
 // the items listed in the scienceQuestionFileBody. If they do not match the program will not function properly.
 // Only change what is betweeen the "" and make sure the verification header has the respective starting % and closing %.
-var scienceQuestionVerificationHeader = "%time,lasttime,lat,lng,speed,course,altitude,Temperature (Celsius),Pressure (Pa),Ascent Rate (m/s),Distance Traveled (m),Absolute Course Difference (degrees)%";
+var scienceQuestionVerificationHeader = "%time,lasttime,lat,lng,speed,course,altitude,Temperature (Celsius),Pressure (Pa),Ascent Rate (m/s),Distance Traveled (m),Absolute Course Difference (degrees),Cumulative Distance Traveled (m),Elapsed Time (minutes)%";
 
 // This section modifies the headers that are displayed to the graph. each Item directly corolates to the verification header above and the position
 // it is in matters as the position determines what is displayed. Make sure to denote each item with openong and closing " and a , inbetween items
 // make sure the array ends with a ];
-var prettyHeader= ["Time (24-hr UTC)","Last Time (24-hr UTC)","Lat","Lng","Speed (km/hr)","Course (degrees)","Altitude (m)","Temperature (Celsius)","Pressure (Pa)","Ascent Rate (m/s)","Distance Traveled (m)","Absolute Course Difference (degrees)"];
+var prettyHeader= ["Time (24-hr UTC)","Last Time (24-hr UTC)","Lat","Lng","Speed (km/hr)","Course (degrees)","Altitude (m)","Temperature (Celsius)","Pressure (Pa)","Ascent Rate (m/s)","Distance Traveled (m)","Absolute Course Difference (degrees)","Cumulative Distance Traveled (m)","Elapsed Time (minutes)"];
 
 //Can go above ten if you would like, but You can only take pictures of the first ten graphs.
 var maxGraphTotal = 20;
@@ -27,16 +27,16 @@ var csvVerificationString = "time,lasttime,lat,lng,speed,course,altitude,Tempera
 // it is very important to follow this form to make sure that the file is parsed correctly. You may notice that after som lines there is a \
 // this is to escape the newline character. This \ is important for the multiline string format only. It has no impact on the data within
 // the string itself. When editing the file make sure to follow the proper format and keep the closing ".
-var scienceQuestionFileBody = "<Temperature Change>{[Temperature (Celsius),altitude][Temperature (Celsius),speed][time,Temperature (Celsius)]} \
-<Pressure Change>{[Pressure (Pa),altitude][time,Pressure (Pa)][Temperature (Celsius),Pressure (Pa)]} \
-<Time of Day>{[Temperature (Celsius),altitude][Pressure (Pa),altitude][time,altitude][time,Temperature (Celsius)][time,Pressure (Pa)][time,speed][time,Distance Traveled (m)][time,Ascent Rate (m/s)]} \
-<Distance Traveled>{[time,altitude][speed,altitude][time,Distance Traveled (m)][speed,Distance Traveled (m)][Distance Traveled (m),altitude][time,Ascent Rate (m/s)]}\
+var scienceQuestionFileBody = "<Temperature Change>{[Temperature (Celsius),altitude][Temperature (Celsius),speed][Elapsed Time (minutes),Temperature (Celsius)]} \
+<Pressure Change>{[Pressure (Pa),altitude][Elapsed Time (minutes),Pressure (Pa)][Temperature (Celsius),Pressure (Pa)]} \
+<Time of Day>{[Temperature (Celsius),altitude][Pressure (Pa),altitude][Elapsed Time (minutes),altitude][Elapsed Time (minutes),Temperature (Celsius)][Elapsed Time (minutes),Pressure (Pa)][Elapsed Time (minutes),speed][Elapsed Time (minutes),Distance Traveled (m)][Elapsed Time (minutes),Ascent Rate (m/s)][Elapsed Time (minutes),Cumulative Distance Traveled (m)]} \
+<Distance Traveled>{[Elapsed Time (minutes),altitude][speed,altitude][Elapsed Time (minutes),Distance Traveled (m)][speed,Distance Traveled (m)][Distance Traveled (m),altitude][Elapsed Time (minutes),Ascent Rate (m/s)][Elapsed Time (minutes),Cumulative Distance Traveled (m)][Cumulative Distance Traveled (m),altitude]}\
 <Jet Stream>{[speed,altitude]}\
-<Clouds>{[time,altitude][time,Pressure (Pa)][Ascent Rate (m/s),altitude][time,Ascent Rate (m/s)]}\
+<Clouds>{[Elapsed Time (minutes),altitude][Elapsed Time (minutes),Pressure (Pa)][Ascent Rate (m/s),altitude][Elapsed Time (minutes),Ascent Rate (m/s)]}\
 <Tropopause>{[Temperature (Celsius),altitude]}\
-<Pollutants>{[speed,altitude][Distance Traveled (m),altitude][speed,Distance Traveled (m)][time,Distance Traveled (m)][time,Ascent Rate (m/s)][Absolute Course Difference (degrees),altitude]}\
-<Ascent Rate>{[time,Ascent Rate (m/s)][Ascent Rate (m/s),altitude][Temperature (Celsius),Ascent Rate (m/s)][Pressure (Pa),Ascent Rate (m/s)][Distance Traveled (m),Ascent Rate (m/s)][time,Distance Traveled (m)]}\
-<Wind Shear>{[speed,altitude][speed,Absolute Course Difference (degrees)][time,Absolute Course Difference (degrees)][Absolute Course Difference (degrees),altitude]}";
+<Pollutants>{[speed,altitude][Distance Traveled (m),altitude][speed,Distance Traveled (m)][Elapsed Time (minutes),Distance Traveled (m)][Elapsed Time (minutes),Ascent Rate (m/s)][Absolute Course Difference (degrees),altitude][Elapsed Time (minutes),Cumulative Distance Traveled (m)][Cumulative Distance Traveled (m),altitude]}\
+<Ascent Rate>{[Elapsed Time (minutes),Ascent Rate (m/s)][Ascent Rate (m/s),altitude][Temperature (Celsius),Ascent Rate (m/s)][Pressure (Pa),Ascent Rate (m/s)][Distance Traveled (m),Ascent Rate (m/s)][Elapsed Time (minutes),Distance Traveled (m)]}\
+<Wind Shear>{[speed,altitude][speed,Absolute Course Difference (degrees)][Elapsed Time (minutes),Absolute Course Difference (degrees)][Absolute Course Difference (degrees),altitude]}";
 
 /*------Global Values------------------------------------------------- */
 var verificationHeaderArray = [];
@@ -460,13 +460,15 @@ function readDataFile(e) {
     headerLine.push("Ascent Rate (m/s)");
     headerLine.push("Distance Traveled (m)");
     headerLine.push("Absolute Course Difference (degrees)");
+    headerLine.push("Cumulative Distance Traveled (m)");
+    headerLine.push("Elapsed Time (minutes)");
 
    for(let j = 0; j < bodyArray[0].length; j++)            //First loop is looping through the file line by line
    {
      if(j == 0)
      {
-       //inserting 3 arrays to hold all calculated data
-       for(let i = 0; i<= 2; i++)
+       //inserting 4 arrays to hold all calculated data
+       for(let i = 0; i<= 5; i++)
        {
          bodyArray.push([]);
        }
@@ -474,11 +476,13 @@ function readDataFile(e) {
        bodyArray[9][0] = 0; //adding the zero to the ascent rate column
        bodyArray[10][0] = 0; //adding the zero to the Distance Travelled column
        bodyArray[11][0] = 0; //adding the zero to the Absolute Value Course
+       bodyArray[12][0] = bodyArray[11][0]
+       bodyArray[13][0]=0;
      }
      if(j >= 1)
      {
-       /*time,lasttime,lat,lng,speed,course,altitude,Temperature (C),Pressure (Pa),Ascent Rate (M/Sec),Distance Traveled (M),Absolute Value Course*/
-       /* 0       1     2   3     4     5       6         7              8                 9                  10                        11*/
+       /*time,lasttime,lat,lng,speed,course,altitude,Temperature (C),Pressure (Pa),Ascent Rate (M/Sec),Distance Traveled (M),Absolute Value Course,Total Distance Traveled,Elapsed Time*/
+       /* 0       1     2   3     4     5       6         7              8                 9                  10                        11                   12                 13*/
        
       //Calculate Ascent Rate
       var altitudeOne = bodyArray[6][j-1];
@@ -499,6 +503,17 @@ function readDataFile(e) {
       var prevCourse = bodyArray[5][j-1];
       var currentCourse = bodyArray[5][j];
       bodyArray[11][j] = calcAbsoluteValueCourse(prevCourse,currentCourse);
+
+      //Total Distance Traveled
+      var prevSum = bodyArray[12][j-1];
+      var newDistanceTraveled = bodyArray[10][j];
+      bodyArray[12][j] = calcTotalDistanceTraveled(prevSum,newDistanceTraveled);
+
+      //Elapsed Time
+      var prevTime = bodyArray[0][j-1];
+      var currentTime = bodyArray[0][j];
+      var currentSum = bodyArray[13][j-1];
+      bodyArray[13][j] = calcElapsedTime(prevTime,currentTime,currentSum);
      }
    }
 console.log(bodyArray);
@@ -1305,6 +1320,27 @@ function calcAbsoluteValueCourse(prevCourse,currentCourse)
   }
 
   return courseDif;
+}
+
+function calcTotalDistanceTraveled(prevSum,newDistanceTraveled)
+{
+  return prevSum + newDistanceTraveled;
+}
+
+function calcElapsedTime(prevTime, newTime,currentSum)
+{
+  var prevTimeConvert = Date.parse(prevTime);
+  var newTimeConvert = Date.parse(newTime);
+  if(isNaN(prevTimeConvert))
+  {
+    return -1;
+  }
+  if(isNaN(newTimeConvert))
+  {
+    return -1;
+  }
+  timeElapsed = currentSum + (((newTimeConvert - prevTimeConvert)/1000)/60);
+  return timeElapsed;
 }
 
 /////////// Event Listeners ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
