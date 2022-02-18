@@ -7,12 +7,12 @@
 // to be graphed fo each science question. It is VITAL that the list of items in the verification header matches
 // the items listed in the scienceQuestionFileBody. If they do not match the program will not function properly.
 // Only change what is betweeen the "" and make sure the verification header has the respective starting % and closing %.
-var scienceQuestionVerificationHeader = "%time,lasttime,lat,lng,speed,course,altitude,Temperature (Celsius),Pressure (Pa),Ascent Rate (m/s),Distance Traveled (m),Absolute Course Difference (degrees)%";
+var scienceQuestionVerificationHeader = "%time,lasttime,lat,lng,speed,course,altitude,Temperature (Celsius),Pressure (Pa),Ascent Rate (m/s),Distance Traveled (m),Absolute Course Difference (degrees),Total Distance Traveled%";
 
 // This section modifies the headers that are displayed to the graph. each Item directly corolates to the verification header above and the position
 // it is in matters as the position determines what is displayed. Make sure to denote each item with openong and closing " and a , inbetween items
 // make sure the array ends with a ];
-var prettyHeader= ["Time (24-hr UTC)","Last Time (24-hr UTC)","Lat","Lng","Speed (km/hr)","Course (degrees)","Altitude (m)","Temperature (Celsius)","Pressure (Pa)","Ascent Rate (m/s)","Distance Traveled (m)","Absolute Course Difference (degrees)"];
+var prettyHeader= ["Time (24-hr UTC)","Last Time (24-hr UTC)","Lat","Lng","Speed (km/hr)","Course (degrees)","Altitude (m)","Temperature (Celsius)","Pressure (Pa)","Ascent Rate (m/s)","Distance Traveled (m)","Absolute Course Difference (degrees)","Total Distance Traveled"];
 
 //Can go above ten if you would like, but You can only take pictures of the first ten graphs.
 var maxGraphTotal = 20;
@@ -460,13 +460,14 @@ function readDataFile(e) {
     headerLine.push("Ascent Rate (m/s)");
     headerLine.push("Distance Traveled (m)");
     headerLine.push("Absolute Course Difference (degrees)");
+    headerLine.push("Total Distance Traveled");
 
    for(let j = 0; j < bodyArray[0].length; j++)            //First loop is looping through the file line by line
    {
      if(j == 0)
      {
-       //inserting 3 arrays to hold all calculated data
-       for(let i = 0; i<= 2; i++)
+       //inserting 4 arrays to hold all calculated data
+       for(let i = 0; i<= 3; i++)
        {
          bodyArray.push([]);
        }
@@ -474,11 +475,12 @@ function readDataFile(e) {
        bodyArray[9][0] = 0; //adding the zero to the ascent rate column
        bodyArray[10][0] = 0; //adding the zero to the Distance Travelled column
        bodyArray[11][0] = 0; //adding the zero to the Absolute Value Course
+       bodyArray[12][0] = bodyArray[11][0]
      }
      if(j >= 1)
      {
-       /*time,lasttime,lat,lng,speed,course,altitude,Temperature (C),Pressure (Pa),Ascent Rate (M/Sec),Distance Traveled (M),Absolute Value Course*/
-       /* 0       1     2   3     4     5       6         7              8                 9                  10                        11*/
+       /*time,lasttime,lat,lng,speed,course,altitude,Temperature (C),Pressure (Pa),Ascent Rate (M/Sec),Distance Traveled (M),Absolute Value Course,Total Distance Traveled*/
+       /* 0       1     2   3     4     5       6         7              8                 9                  10                        11                   12*/
        
       //Calculate Ascent Rate
       var altitudeOne = bodyArray[6][j-1];
@@ -499,6 +501,11 @@ function readDataFile(e) {
       var prevCourse = bodyArray[5][j-1];
       var currentCourse = bodyArray[5][j];
       bodyArray[11][j] = calcAbsoluteValueCourse(prevCourse,currentCourse);
+
+      //Total Distance Traveled
+      var prevSum = bodyArray[12][j-1];
+      var newDistanceTraveled = bodyArray[10][j];
+      bodyArray[12][j] = calcTotalDistanceTraveled(prevSum,newDistanceTraveled);
      }
    }
 console.log(bodyArray);
@@ -1305,6 +1312,11 @@ function calcAbsoluteValueCourse(prevCourse,currentCourse)
   }
 
   return courseDif;
+}
+
+function calcTotalDistanceTraveled(prevSum,newDistanceTraveled)
+{
+  return prevSum + newDistanceTraveled;
 }
 
 /////////// Event Listeners ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
