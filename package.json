@@ -1,0 +1,22 @@
+{
+  "name": "detects_datalizer_mkii",
+  "version": "1.0.0",
+  "description": "DETECTS Datalizer Tool Version 2",
+  "main": "DatalizerMKII_JS.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/uah-detects/DETECTS_Datalizer_MKII.git"
+  },
+  "keywords": [
+    "datalizer"
+  ],
+  "author": "uah-detects <detects@uah.edu>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/uah-detects/DETECTS_Datalizer_MKII/issues"
+  },
+  "homepage": "https://github.com/uah-detects/DETECTS_Datalizer_MKII#readme"
+}
