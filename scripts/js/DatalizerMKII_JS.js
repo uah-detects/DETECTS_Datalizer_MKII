@@ -150,6 +150,7 @@ function getConfBody(fileContentArray)
         case false:
           var percentPosition = fileBodyString.indexOf("<",lastPosition);
           console.log(percentPosition);
+          console.log("CDN TEST");
           if(percentPosition == -1)  //"<" not found
           {
             stopLoop = false;
