@@ -627,8 +627,7 @@ function removeOptions(selectElement) {
   }
 }
 
-function populateDropdowns(headerArray)
-{
+function populateDropdowns(headerArray){
   var selectX = document.getElementById("selectX");
   var selectY = document.getElementById("selectY");
 
@@ -648,17 +647,13 @@ function populateDropdowns(headerArray)
     var el = document.createElement("option");
     el.textContent = opt;
     el.value = opt;
-    selectX.appendChild(el);
-  }
+    selectX.appendChild(el);}
   for(var i = 0; i < headerArray.length; i++) {
     var opt = headerArray[i];
     var el = document.createElement("option");
     el.textContent = opt;
     el.value = opt;
-    selectY.appendChild(el);
-  }
-
-}
+    selectY.appendChild(el);}}
 
 function verifyCSVHeader(stringToVer)
 {
@@ -1134,56 +1129,6 @@ function allScreenshot()
   });
 }
 
-jQuery('#btnExport').on('click', function($){
-  //var title = $("<p>Image Here</p>");
-  //$("#content").append(title);
-    // Finding total number of elements added
-    var total_element = $(".element").length;
- 
-    // last <div> with element class id
-    var lastid = $(".element:last").attr("id");
-    var split_id = lastid.split("_");
-    var nextindex = Number(split_id[1]);
-    console.log(nextindex);
-    console.log(document.getElementById('imageFileType').value);
-    if(nextindex < 2)
-    {
-      window.alert("Error: You have created no graphs.");
-    }
-    for(let i =2; i <= nextindex; i++)
-    {
-      var divGraph = $('#graph');
-      Plotly.toImage('txt_'+ i, { format: document.getElementById('imageFileType').value, width: 1200, height: 500 }).then(function (dataURL) {
-        console.log(dataURL);
-        dataURLtoFile(dataURL, "File", i - 1);
-      });
-      if(i == 12){
-        window.alert("Error: Only 10 graphs can be exported at one time. Please close some of your first 10 graphs to continue exporting pictures.");
-      }
-    }
-
-});
-
-$('#btnExportCSV').click(function(){
-
-console.log("In Funcction CSV");
-var exportedArray = exportArray();
-console.log("New Array");
-console.log(exportedArray);
-
-let csvContent = "data:text/csv;charset=utf-8," 
-    + exportedArray.map(e => e.join(",")).join("\n");
-
-    var encodedUri = encodeURI(csvContent);
-    var link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", "balloonData.csv");
-    document.body.appendChild(link); // Required for FF
-    
-    link.click(); 
-
-});
-
 function  dataURLtoFile(dataUrl, fileName, graphNumber){
     var arr = dataUrl.split(','), mime = arr[0].match(/:(.*?);/)[1],
         bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
@@ -1346,6 +1291,57 @@ function calcElapsedTime(prevTime, newTime,currentSum)
 
 /////////// Event Listeners ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+$( document ).ready(function() {
+$('#btnExport').click(function($){
+  //var title = $("<p>Image Here</p>");
+  //$("#content").append(title);
+    // Finding total number of elements added
+    var total_element = $(".element").length;
+ 
+    // last <div> with element class id
+    var lastid = $(".element:last").attr("id");
+    var split_id = lastid.split("_");
+    var nextindex = Number(split_id[1]);
+    console.log(nextindex);
+    console.log(document.getElementById('imageFileType').value);
+    if(nextindex < 2)
+    {
+      window.alert("Error: You have created no graphs.");
+    }
+    for(let i =2; i <= nextindex; i++)
+    {
+      var divGraph = $('#graph');
+      Plotly.toImage('txt_'+ i, { format: document.getElementById('imageFileType').value, width: 1200, height: 500 }).then(function (dataURL) {
+        console.log(dataURL);
+        dataURLtoFile(dataURL, "File", i - 1);
+      });
+      if(i == 12){
+        window.alert("Error: Only 10 graphs can be exported at one time. Please close some of your first 10 graphs to continue exporting pictures.");
+      }
+    }
+
+});
+
+$('#btnExportCSV').click(function(){
+
+console.log("In Funcction CSV");
+var exportedArray = exportArray();
+console.log("New Array");
+console.log(exportedArray);
+
+let csvContent = "data:text/csv;charset=utf-8," 
+    + exportedArray.map(e => e.join(",")).join("\n");
+
+    var encodedUri = encodeURI(csvContent);
+    var link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "balloonData.csv");
+    document.body.appendChild(link); // Required for FF
+    
+    link.click(); 
+
+});
+
 document.getElementById('file-input').addEventListener('change', readDataFile, false);  // Listener for the Data File input
 
 document.getElementById('mySwitch').addEventListener('change', function(){
@@ -1369,3 +1365,5 @@ document.getElementById('mySwitchColor').addEventListener('change', function(){
     console.log("unset");
   }
   }, false);
+});
+
