@@ -1134,7 +1134,7 @@ function allScreenshot()
   });
 }
 
-jQuery('#btnExport').on('click', function(){
+jQuery('#btnExport').on('click', function($){
   //var title = $("<p>Image Here</p>");
   //$("#content").append(title);
     // Finding total number of elements added
