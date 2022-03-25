@@ -1296,7 +1296,7 @@ $('#btnExport').click(function($){
   //var title = $("<p>Image Here</p>");
   //$("#content").append(title);
     // Finding total number of elements added
-    var total_element = $(".element").length;
+    //var total_element = $(".element").length;
  
     // last <div> with element class id
     var lastid = $(".element:last").attr("id");
