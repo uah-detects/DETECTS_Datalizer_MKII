@@ -1299,7 +1299,7 @@ $('#btnExport').click(function($){
     //var total_element = $(".element").length;
  
     // last <div> with element class id
-    var lastid = $(".element:last").attr("id");
+    var lastid = jQuery(".element:last").attr("id");
     var split_id = lastid.split("_");
     var nextindex = Number(split_id[1]);
     console.log(nextindex);
