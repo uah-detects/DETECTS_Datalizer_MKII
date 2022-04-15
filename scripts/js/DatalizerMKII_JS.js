@@ -1162,6 +1162,15 @@ for(let i = 0; i < bodyDataArray[0].length; i++)
 return exporterArray;
 }
 
+/*
+NOTE: There was an issue integrating this tool into the Wordpress site and as a result of me not having time to fix the issue before my departure I had to disable these three features
+to allow for integration into the site, but they still work in the client side version of the tool:
+Clear: This feature is intended to clear only the graphs that the user has created. Issue: the version integrated into the wordpress site is clearing the entire page for some reason.
+Image export: This feature is intended to export images of all the graphs that the user has created. Issue: "Uncaught type error: $ is not a function" I think there might be something going on with the Jquery Integration, 
+but I'm not exactly certain. I already encountered a race condition because I didn't put a ready statement where I was injecting the graphs into the HTML page.
+ */
+
+
 function disableInterface()
 {
   document.getElementById("headerErrorNotice").disabled=true;
@@ -1171,9 +1180,9 @@ function disableInterface()
   document.getElementById("selectScienceQuestion").disabled = true;
   document.getElementById("colorChangeSwitch").disabled = true;
   document.getElementById("plotScienceQuestion").disabled = true;
-  document.getElementById("clearButton").disabled = true;
-  document.getElementById("imageFileType").disabled = true;
-  document.getElementById("btnExport").disabled = true;
+  //document.getElementById("clearButton").disabled = true;
+  //document.getElementById("imageFileType").disabled = true;
+  //document.getElementById("btnExport").disabled = true;
   document.getElementById("btnExportCSV").disabled = true;
   hiddenInterface();
 }
@@ -1187,9 +1196,9 @@ function hiddenInterface()
   document.getElementById("selectScienceQuestion").hidden = true;
   document.getElementById("colorChangeSwitch").hidden = true;
   document.getElementById("plotScienceQuestion").hidden = true;
-  document.getElementById("clearButton").hidden = true;
-  document.getElementById("imageFileType").hidden = true;
-  document.getElementById("btnExport").hidden = true;
+  //document.getElementById("clearButton").hidden = true;
+  //document.getElementById("imageFileType").hidden = true;
+  //document.getElementById("btnExport").hidden = true;
   document.getElementById("btnExportCSV").hidden = true;
 }
 
@@ -1201,9 +1210,9 @@ function enableInterface()
   document.getElementById("selectScienceQuestion").disabled = false;
   document.getElementById("colorChangeSwitch").disabled = false;
   document.getElementById("plotScienceQuestion").disabled = false;
-  document.getElementById("clearButton").disabled = false;
-  document.getElementById("imageFileType").disabled = false;
-  document.getElementById("btnExport").disabled = false;
+  //document.getElementById("clearButton").disabled = false;
+  //document.getElementById("imageFileType").disabled = false;
+  //document.getElementById("btnExport").disabled = false;
   document.getElementById("btnExportCSV").disabled = false;
   showInterface();
 }
@@ -1216,9 +1225,9 @@ function showInterface()
   document.getElementById("selectScienceQuestion").hidden = false;
   document.getElementById("colorChangeSwitch").hidden = false;
   document.getElementById("plotScienceQuestion").hidden = false;
-  document.getElementById("clearButton").hidden = false;
-  document.getElementById("imageFileType").hidden = false;
-  document.getElementById("btnExport").hidden = false;
+  //document.getElementById("clearButton").hidden = false;
+ // document.getElementById("imageFileType").hidden = false;
+  //document.getElementById("btnExport").hidden = false;
   document.getElementById("btnExportCSV").hidden = false;
 }
 
